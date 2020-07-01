@@ -1,0 +1,72 @@
+<html>
+    <head>
+    </head>
+
+    <div class="loginDiv" id="loginDiv">
+        <b>Name:</b> <input type="text" id="loginDiv-input"></input>
+        <button id = "loginDiv-button">Login</button>
+    </div>
+    
+    <div id = "gameDiv" style="display:none";>
+        
+        <canvas id ="ctx" width ="500" height="500" style="border:1px solid #000000"></canvas>
+        
+        <form id="login-form">
+            <input type="text" id="login-input" style="width:500px"></input>
+        </form>
+        
+    </div>
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script>
+        var socket = io();
+        
+        //Login
+        var loginDiv = document.getElementById("loginDiv");
+        var loginDivInput = document.getElementById("loginDiv-input");
+        var loginDivButton = document.getElementById("loginDiv-button");
+        
+        loginDivButton.onclick = function() {
+            if (loginDivInput.value.length < 1){
+                alert("Name is too short");
+                return;
+            }
+            socket.emit('login',{name:loginDivInput.value});
+            console.log(loginDivInput.value);
+        }
+        
+        socket.on('loginResponse',function(data){
+            if(data.success){
+                loginDiv.style.display = 'none';
+                gameDiv.style.display = 'inline-block';
+            } else
+            alert("Sign in unsuccessul. Reason: " + data.msg);
+        });
+        
+        
+        
+        
+        var loginForm = document.getElementById("login-form");
+        var loginInput = document.getElementById("login-input");
+        
+        loginForm.onsubmit = function(e){
+            e.preventDefault();
+            socket.emit('nameRegistered', loginInput.value);
+            loginInput.value = "";
+        }
+        var ctx = document.getElementById("ctx").getContext("2d");
+        ctx.font = "30px Arial"
+        
+        
+        
+        
+        
+    </script>
+
+
+</html>
