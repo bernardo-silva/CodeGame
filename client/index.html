@@ -2,22 +2,131 @@
     <head>
     </head>
 
+    <style type="text/css" id="gwd-text-style">
+        p {
+          margin: 0px;
+        }
+        h1 {
+          margin: 0px;
+        }
+        h2 {
+          margin: 0px;
+        }
+        h3 {
+          margin: 0px;
+        }
+      </style>
+      <style type="text/css">
+        html, body {
+          width: 100%;
+          height: 100%;
+          margin: 0px;
+        }
+        body {
+          background-color: transparent;
+          transform: perspective(1400px) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+          transform-style: preserve-3d;
+        }
+        .loginInput {
+          position: absolute;
+          height: 30px;
+          width: 150px;
+          left: 50px;
+          top: 140px;
+        }
+        .loginButton {
+            position: absolute;
+            width: 50px;
+            left: 210px;
+            top: 140px;
+            height: 30px;
+        }
+        .loginTitle {
+            position: absolute;
+            left: 50px;
+            top: 50px;
+            opacity: 1;
+            font-weight: bold;
+            font-family: Verdana;
+            width: 274px;
+            height: 86px;
+            transform-origin: 34250px 129.831px 0px;
+            font-size: 75px;
+        }
+        #lobbyDiv {
+            display: none;
+            padding: 20px;
+            /* font-weight: bold; */
+            font-family: Verdana;
+            font-size: 25px;
+        }
+        #lobbyDiv-button{
+            display: none;
+        }
+        #gameDiv {
+            float:left;
+            width: 80%;
+            height: 100%;
+            display: none;
+        }
+        #ctx {
+            width:100%;
+            height: 100%;
+            border:1px;
+            border-style: solid;
+            border-color: #000000;
+        }
+        #chatDiv{
+            display: none;
+            float:right;
+            min-height: 150px;
+            width: 19%;
+        }
+        #chatText {
+            overflow-y: scroll;
+        }
+        #chatForm {
+            /* position:absolute; */
+            /* bottom: 0; */
+            width: 100%;
+        }
+        #chatInput {
+            border: 3px solid #555;
+
+            /* position:absolute; */
+            /* bottom: 0; */
+            width: 100%;
+        }
+      </style>
+    </head>
+    <div id="lobbyDiv">
+        <b>Current players:</b>
+        <div id = playerListDiv>
+        </div>
+        <button id="lobbyDiv-button">Start game!</button>
+    </div>
+
+
     <div class="loginDiv" id="loginDiv">
-        <b>Name:</b> <input type="text" id="loginDiv-input"></input>
-        <button id = "loginDiv-button">Login</button>
+      <p class="loginTitle" id="titleText">CÓDIGO</p>
+      <form id="loginDivForm">
+        <input type="text" id="loginDiv-input" class="loginInput" placeholder="Enter your name"></input>
+      </form>
+      <button id="loginDiv-button" class="loginButton">Login!</button>
     </div>
-    
-    <div id = "gameDiv" style="display:none";>
-        
-        <canvas id ="ctx" width ="500" height="500" style="border:1px solid #000000"></canvas>
-        
-        <form id="login-form">
-            <input type="text" id="login-input" style="width:500px"></input>
+
+    <div id = "gameDiv">
+        <canvas id ="ctx"></canvas>    
+    </div>
+    <div id="chatDiv"> 
+        <div id=chatText"">
+            <div>Hello</div>
+        </div>
+        <form id="chatForm">
+            <input type="text" id="chatInput"></input>
         </form>
-        
     </div>
-    
-    
+        
     
     
     
@@ -25,11 +134,20 @@
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script>
         var socket = io();
-        
-        //Login
-        var loginDiv = document.getElementById("loginDiv");
-        var loginDivInput = document.getElementById("loginDiv-input");
+
+        var loginDiv       = document.getElementById("loginDiv");
+        var loginDivForm   = document.getElementById("loginDivForm");
+        var loginDivInput  = document.getElementById("loginDiv-input");
         var loginDivButton = document.getElementById("loginDiv-button");
+        
+        var lobbyDiv = document.getElementById("lobbyDiv");
+        var playerListDiv = document.getElementById("playerListDiv");
+        var lobbyDivButton = document.getElementById("lobbyDiv-button");
+
+        var gameDiv  = document.getElementById("gameDiv");
+        var chatDiv  = document.getElementById("chatDiv");
+
+        //Login
         
         loginDivButton.onclick = function() {
             if (loginDivInput.value.length < 1){
@@ -39,32 +157,86 @@
             socket.emit('login',{name:loginDivInput.value});
             console.log(loginDivInput.value);
         }
+        loginDivForm.onsubmit = function(e){
+            e.preventDefault();
+            if (loginDivInput.value.length < 1){
+                alert("Name is too short");
+                return;
+            }
+            socket.emit('login',{name:loginDivInput.value});
+            console.log(loginDivInput.value);
+        }
+        
+        var currentPlayers = [];
         
         socket.on('loginResponse',function(data){
             if(data.success){
                 loginDiv.style.display = 'none';
-                gameDiv.style.display = 'inline-block';
-            } else
-            alert("Sign in unsuccessul. Reason: " + data.msg);
+                lobbyDiv.style.display = 'inline-block';
+                // gameDiv.style.display = 'inline-block';
+                // chatDiv.style.display = 'inline-block';
+                currentPlayers = data.players;
+                console.log(currentPlayers);
+                for(let i in currentPlayers){
+                    addPlayerToLobby(currentPlayers[i]);
+                }
+                if(data.isAdmin){
+                    lobbyDivButton.style.display = 'inline-block';
+                }
+                socket.emit('newPlayer',socket.id);
+            } 
+            else{
+                alert("Sign in unsuccessul. Reason: " + data.msg);
+            }
         });
-        
-        
-        
-        
-        var loginForm = document.getElementById("login-form");
-        var loginInput = document.getElementById("login-input");
-        
-        loginForm.onsubmit = function(e){
-            e.preventDefault();
-            socket.emit('nameRegistered', loginInput.value);
-            loginInput.value = "";
+
+        socket.on('newPlayer', function(data){
+            currentPlayers.push(data.player);
+            addPlayerToLobby(data.player);
+        })
+
+        socket.on('deletePlayer', function(data){
+            currentPlayers = currentPlayers.filter(player => player != data.player)
+            playerListDiv.innerHTML = '';
+            for(let i in currentPlayers){
+                addPlayerToLobby(currentPlayers[i]);
+            }
+        })
+
+        socket.on('newAdmin', function(){
+            console.log('Im new admin')
+            lobbyDivButton.style.display = 'inline-block';
+        })
+
+        lobbyDivButton.onclick = function(){
+            socket.emit('start-game');
         }
+        //Game
         var ctx = document.getElementById("ctx").getContext("2d");
         ctx.font = "30px Arial"
+
+
+        var img = {};
+        img.black = new Image();
+        img.black.src = '/client/assets/white0.png';
+        img.black.onload = customDrawImage;
         
         
+        // console.log(img.black.width);
+        // ctx.drawImage(img.black,0,0);
+        // ctx.fillText("AAA",400,400);
         
         
+        function customDrawImage(){
+            let width = this.width/4;
+            let height = this.height/4;
+            ctx.drawImage(this, 600,720-height,width, height);
+        }
+        
+        
+        function addPlayerToLobby(name){
+            playerListDiv.innerHTML += '<div>' + name + '</div>';
+        }
         
     </script>
 

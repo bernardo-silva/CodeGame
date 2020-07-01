@@ -1,7 +1,7 @@
 // import Player from './player'
 
 class Player{
-    constructor(name, id,socket, isAdmin = false){
+    constructor(name, id, socket, isAdmin){
         this.name = name;
         this.id = id;
         this.socket = socket;
@@ -26,8 +26,8 @@ class GameStatus{
         if(this.playerNames.includes(name)){
             return {success: false, msg: "Name already in use"};
         }
-        console.log("New player " + name + " with id " + id);
-        this.players[id] = new Player(name,id, socket, isAdmin);
+        console.log("New player " + name + " with id " + id + " and " + isAdmin);
+        this.players[id] = new Player(name, id, socket, isAdmin);
         this.playerNames.push(name);
         console.log(this.playerNames);
         this.numberPlayers ++;
@@ -48,8 +48,10 @@ class GameStatus{
         // console.log(Object.keys(this.players));
         // console.log(id);
         // console.log(Object.keys(this.players).includes(id));
+        console.log(Object.keys(this.players));
         return Object.keys(this.players).includes(id);
     }
+
     dealPiece(id,color){
         if(color == 'b'){
             let i = Math.floor(Math.random()*this.availableBPieces.length);
