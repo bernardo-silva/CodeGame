@@ -11,7 +11,13 @@ app.get('/',function(req, res) {
 
 app.use('/client', express.static(__dirname + '/client'));
 
-server.listen(2000);
+
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 2000;
+}
+
+server.listen(port);
 console.log('Server started.');
 
 var socket_list = {};
@@ -37,9 +43,9 @@ io.sockets.on('connection',function(socket){
 
     socket.on("disconnect", function(){
         console.log('Disconnected ' + socket.id);
-        let name = GS.players[socket.id].name;
         delete socket_list[socket.id];
         if (GS.checkPlayer(socket.id)){
+            let name = GS.players[socket.id].name;
             if (GS.players[socket.id].isAdmin){
                 socket_list[Object.keys(socket_list)[0]].emit("newAdmin");
                 console.log('New admin ' + Object.keys(socket_list)[0]);
