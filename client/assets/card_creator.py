@@ -5,15 +5,18 @@ import os
 images = os.listdir()
 
 print(images)
-
+names = []
 for img_name in images:
     if 'png' not in img_name:
         continue
     if 'white' in img_name:
         continue
-    img = cv.imread(img_name)
-    img = cv.bitwise_not(img)
-    cv.imwrite(img_name.replace('black','white'),img)
+    # img = cv.imread(img_name)
+    # img = cv.bitwise_not(img)
+    # cv.imwrite(img_name.replace('black','white'),img)
+    names.append(img_name)
+
+print(names)
 # img = np.zeros((270,200,3),np.uint8)
 
 # font = cv.FONT_HERSHEY_PLAIN

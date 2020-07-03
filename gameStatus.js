@@ -26,6 +26,9 @@ class GameStatus{
         if(this.playerNames.includes(name)){
             return {success: false, msg: "Name already in use"};
         }
+        if(this.numberPlayers == 4){
+            return {success: false, msg: "Game is full"};
+        }
         console.log("New player " + name + " with id " + id + " and " + isAdmin);
         this.players[id] = new Player(name, id, socket, isAdmin);
         this.playerNames.push(name);

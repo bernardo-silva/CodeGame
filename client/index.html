@@ -1,104 +1,18 @@
 <html>
     <head>
+        <link rel="stylesheet" type="text/css" href="/client/style.css">
     </head>
-
-    <style type="text/css" id="gwd-text-style">
-        p {
-          margin: 0px;
-        }
-        h1 {
-          margin: 0px;
-        }
-        h2 {
-          margin: 0px;
-        }
-        h3 {
-          margin: 0px;
-        }
-      </style>
-      <style type="text/css">
-        html, body {
-          width: 100%;
-          height: 100%;
-          margin: 0px;
-        }
-        body {
-          background-color: transparent;
-          transform: perspective(1400px) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-          transform-style: preserve-3d;
-        }
-        .loginInput {
-          position: absolute;
-          height: 30px;
-          width: 150px;
-          left: 50px;
-          top: 140px;
-        }
-        .loginButton {
-            position: absolute;
-            width: 50px;
-            left: 210px;
-            top: 140px;
-            height: 30px;
-        }
-        .loginTitle {
-            position: absolute;
-            left: 500px;
-            top: 50px;
-            opacity: 1;
-            font-weight: bold;
-            font-family: Verdana;
-            width: 274px;
-            height: 86px;
-            transform-origin: 34250px 129.831px 0px;
-            font-size: 75px;
-        }
-        #lobbyDiv {
-            display: none;
-            padding: 20px;
-            /* font-weight: bold; */
-            font-family: Verdana;
-            font-size: 25px;
-        }
-        #lobbyDiv-button{
-            display: none;
-        }
-        #gameDiv {
-            float:left;
-            width: 80%;
-            height: 100%;
-            display: none;
-        }
-        #ctx {
-            width:100%;
-            height: 100%;
-            border:1px;
-            border-style: solid;
-            border-color: #000000;
-        }
-        #chatDiv{
-            display: none;
-            float:right;
-            min-height: 150px;
-            width: 19%;
-        }
-        #chatText {
-            overflow-y: scroll;
-        }
-        #chatForm {
-            /* position:absolute; */
-            /* bottom: 0; */
-            width: 100%;
-        }
-        #chatInput {
-            border: 3px solid #555;
-
-            /* position:absolute; */
-            /* bottom: 0; */
-            width: 100%;
-        }
-      </style>
-    </head>
+    
+    <!-- LOGIN PAGE -->
+    <div class="loginDiv" id="loginDiv">
+        <p class="loginTitle" id="titleText">CODE GAME</p>
+        <form id="loginDivForm">
+            <input type="text" id="loginDiv-input" class="loginInput" placeholder="Enter your name"></input>
+        </form>
+        <button id="loginDiv-button" class="loginButton">Login!</button>
+    </div>
+    
+    <!-- LOBBY PAGE -->
     <div id="lobbyDiv">
         <b>Current players:</b>
         <div id = playerListDiv>
@@ -106,27 +20,26 @@
         <button id="lobbyDiv-button">Start game!</button>
     </div>
 
-
-    <div class="loginDiv" id="loginDiv">
-      <p class="loginTitle" id="titleText">CÓDIGO</p>
-      <form id="loginDivForm">
-        <input type="text" id="loginDiv-input" class="loginInput" placeholder="Enter your name"></input>
-      </form>
-      <button id="loginDiv-button" class="loginButton">Login!</button>
-    </div>
-
+    <!-- GAME PAGE -->
     <div id = "gameDiv">
-        <canvas id ="ctx"></canvas>    
+        <div id="pickPieceDiv">
+            <b style="font-size: 100%; font-family: Arial;">Choose a piece:</b>
+            <img class="pickPiece" id ="pickPieceBlack" src="/client/assets/black.png" alt="Black Piece">
+            <img class="pickPiece" id ="pickPieceWhite" src="/client/assets/white.png" alt="White Piece">
+        </div>
+        <!-- <canvas id ="ctx"></canvas>     -->
     </div>
+
+    <!-- CHAT -->
     <div id="chatDiv"> 
-        <div id=chatText"">
+        <div id="chatText">
             <div>Hello</div>
         </div>
         <form id="chatForm">
             <input type="text" id="chatInput"></input>
         </form>
     </div>
-        
+    
     
     
     
@@ -146,6 +59,11 @@
 
         var gameDiv  = document.getElementById("gameDiv");
         var chatDiv  = document.getElementById("chatDiv");
+        var chatText  = document.getElementById("chatText");
+        var chatForm = document.getElementById("chatForm");
+        var chatInput = document.getElementById("chatInput");
+
+        var myName = '';
 
         //Login
         
@@ -157,12 +75,14 @@
             socket.emit('login',{name:loginDivInput.value});
             console.log(loginDivInput.value);
         }
+
         loginDivForm.onsubmit = function(e){
             e.preventDefault();
             if (loginDivInput.value.length < 1){
                 alert("Name is too short");
                 return;
             }
+            myName = loginDivInput.value;   
             socket.emit('login',{name:loginDivInput.value});
             console.log(loginDivInput.value);
         }
@@ -211,15 +131,54 @@
         lobbyDivButton.onclick = function(){
             socket.emit('start-game');
         }
+        socket.on('start-game', function(){
+            lobbyDiv.style.display = 'none';
+            gameDiv.style.display = 'inline-block';
+            chatDiv.style.display = 'inline-block';
+            orderPlayers();
+            for(let i = 1; i<=currentPlayers.length; i++){
+                gameDiv.innerHTML += "<div id=\"player" + i +"\">" + currentPlayers[i-1] + "</div>";
+            }
+        })
         //Game
-        var ctx = document.getElementById("ctx").getContext("2d");
-        ctx.font = "30px Arial"
 
+        //CHAT-----
+        chatForm.onsubmit = function(e){
+            e.preventDefault();
+            if (!chatInput.value.replace(/\s/g, '').length){
+                return;
+            }
+            socket.emit('addToChat',{msg:chatInput.value});
+            chatInput.value = "";
+        }
+
+        socket.on('addToChat',function(msg){
+            console.log(msg.msg);
+            addToChat(msg.msg);
+            chatText.scrollTop = chatText.scrollHeight;
+        })
 
         var img = {};
-        img.black = new Image();
-        img.black.src = '/client/assets/white0.png';
-        img.black.onload = customDrawImage;
+        var img_names = ['black.png', 'black0.png', 'black1.png', 'black2.png', 'black3.png', 
+                         'black4.png', 'black5.png', 'black6.png', 'black7.png', 'black8.png',
+                         'black9.png', 'black10.png', 'black11.png', 'black-.png',
+                         'white.png', 'white0.png', 'white1.png', 'white2.png', 'white3.png', 
+                         'white4.png', 'white5.png', 'white6.png', 'white7.png', 'white8.png',
+                         'white9.png', 'white10.png', 'white11.png', 'white-.png'];
+
+        for(let i in img_names){
+            img[img_names[i]] = new Image();
+            img[img_names[i]].src = '/client/assets/' + img_names[i];
+        }
+        var canvas_width  = ctx.width;
+        var canvas_height = ctx.height;
+
+        socket.on('pickUpPiece',function(data){
+            
+        })
+        // img.black = new Image();
+        // img.black.src = '/client/assets/white0.png';
+        // img.black.onload = customDrawImage;
         
         
         // console.log(img.black.width);
@@ -227,16 +186,27 @@
         // ctx.fillText("AAA",400,400);
         
         
-        function customDrawImage(){
-            let width = this.width/4;
-            let height = this.height/4;
-            ctx.drawImage(this, 600,720-height,width, height);
-        }
-        
-        
         function addPlayerToLobby(name){
             playerListDiv.innerHTML += '<div>' + name + '</div>';
         }
+        
+        function customDrawImage(image, posx, posy, scale = 1){
+            let width = this.width/4 * scale;
+            let height = this.height/4 * scale;
+            ctx.drawImage(image, posx, posy, width, height);
+        }
+
+        function orderPlayers(){
+            while(currentPlayers[0] != myName){
+                currentPlayers.unshift(currentPlayers.pop());
+            } 
+            console.log(currentPlayers);
+        }
+
+        function addToChat(msg){
+            chatText.innerHTML += '<div>' + msg + '</div>';
+        }
+
         
     </script>
 

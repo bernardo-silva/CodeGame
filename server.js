@@ -66,10 +66,21 @@ io.sockets.on('connection',function(socket){
     })
 
 
+    socket.on('start-game', function(){
+        console.log('Game Started!')
+        if(GS.players[socket.id].isAdmin){
+            for(let i in socket_list){
+                socket_list[i].emit('start-game',{});
+            }
+        }
+    })
 
-    socket.on('nameRegistered', function(data){
-        console.log(data);
-
+    socket.on('addToChat',function(data){
+        let name = GS.players[socket.id].name;
+        console.log("(" + name + "): " + data.msg);
+        for(let i in socket_list){
+            socket_list[i].emit('addToChat',{msg:"(" + name + "): " + data.msg});
+        }
     })
 
 })
