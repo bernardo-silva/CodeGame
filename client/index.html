@@ -73,7 +73,6 @@
                 return;
             }
             socket.emit('login',{name:loginDivInput.value});
-            console.log(loginDivInput.value);
         }
 
         loginDivForm.onsubmit = function(e){
@@ -84,7 +83,6 @@
             }
             myName = loginDivInput.value;   
             socket.emit('login',{name:loginDivInput.value});
-            console.log(loginDivInput.value);
         }
         
         var currentPlayers = [];
@@ -96,7 +94,7 @@
                 // gameDiv.style.display = 'inline-block';
                 // chatDiv.style.display = 'inline-block';
                 currentPlayers = data.players;
-                console.log(currentPlayers);
+                // console.log(currentPlayers);
                 for(let i in currentPlayers){
                     addPlayerToLobby(currentPlayers[i]);
                 }
@@ -132,10 +130,12 @@
             socket.emit('start-game');
         }
         socket.on('start-game', function(){
+            console.log("Current players: " + currentPlayers);
             lobbyDiv.style.display = 'none';
             gameDiv.style.display = 'inline-block';
             chatDiv.style.display = 'inline-block';
             orderPlayers();
+            console.log("Ordered players: " + currentPlayers);
             for(let i = 1; i<=currentPlayers.length; i++){
                 gameDiv.innerHTML += "<div id=\"player" + i +"\">" + currentPlayers[i-1] + "</div>";
             }
@@ -170,8 +170,8 @@
             img[img_names[i]] = new Image();
             img[img_names[i]].src = '/client/assets/' + img_names[i];
         }
-        var canvas_width  = ctx.width;
-        var canvas_height = ctx.height;
+        var game_width  = gameDiv.width;
+        var game_height = gameDiv.height;
 
         socket.on('pickUpPiece',function(data){
             
@@ -193,7 +193,7 @@
         function customDrawImage(image, posx, posy, scale = 1){
             let width = this.width/4 * scale;
             let height = this.height/4 * scale;
-            ctx.drawImage(image, posx, posy, width, height);
+            // ctx.drawImage(image, posx, posy, width, height);
         }
 
         function orderPlayers(){
