@@ -1,6 +1,8 @@
 <html>
     <head>
+        <title>Code Game</title>
         <link rel="stylesheet" type="text/css" href="/client/style.css">
+        <link rel="icon" href="/client/assets/favicon.png">
     </head>
     
     <!-- LOGIN PAGE -->
@@ -17,15 +19,15 @@
         <b>Current players:</b>
         <div id = playerListDiv>
         </div>
-        <button id="lobbyDiv-button">Start game!</button>
+        <button id="lobbyDivButton">Start game!</button>
     </div>
 
     <!-- GAME PAGE -->
     <div id = "gameDiv">
         <div id="pickPieceDiv">
             <b style="font-size: 100%; font-family: Arial;">Choose a piece:</b>
-            <img  id ="pickPieceBlack" src="/client/assets/black.png" alt="Black Piece">
-            <img  id ="pickPieceWhite" src="/client/assets/white.png" alt="White Piece">
+            <img id="pickB" src="/client/assets/black.png" alt="Black Piece">
+            <img id="pickW"  src="/client/assets/white.png" alt="White Piece">
         </div>
         <!-- <canvas id ="ctx"></canvas>     -->
     </div>
@@ -41,192 +43,20 @@
     </div>
     
     
-    
-    
-    
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-    <script>
-        var socket = io();
-
-        var loginDiv       = document.getElementById("loginDiv");
-        var loginDivForm   = document.getElementById("loginDivForm");
-        var loginDivInput  = document.getElementById("loginDiv-input");
-        var loginDivButton = document.getElementById("loginDiv-button");
-        
-        var lobbyDiv = document.getElementById("lobbyDiv");
-        var playerListDiv = document.getElementById("playerListDiv");
-        var lobbyDivButton = document.getElementById("lobbyDiv-button");
-
-        // ---- GAME ----
-        var pickPieceDiv = document.getElementById("pickPieceDiv");
-        var pickPieceBlack = document.getElementById("pickPieceBlack");
-        var pickPieceWhite = document.getElementById("pickPieceWhite");
-        var gameDiv  = document.getElementById("gameDiv");
-
-
-        // ---- CHAT ----
-        var chatDiv  = document.getElementById("chatDiv");
-        var chatText  = document.getElementById("chatText");
-        var chatForm = document.getElementById("chatForm");
-        var chatInput = document.getElementById("chatInput");
-
-        var myName = '';
-
-        //Login
-        
-        loginDivButton.onclick = function() {
-            if (loginDivInput.value.length < 1){
-                alert("Name is too short");
-                return;
-            }
-            myName = loginDivInput.value;   
-            socket.emit('login',{name:loginDivInput.value});
-        }
-
-        loginDivForm.onsubmit = function(e){
-            e.preventDefault();
-            if (loginDivInput.value.length < 1){
-                alert("Name is too short");
-                return;
-            }
-            myName = loginDivInput.value;   
-            socket.emit('login',{name:loginDivInput.value});
-        }
-        
-        var currentPlayers = [];
-        
-        socket.on('loginResponse',function(data){
-            if(data.success){
-                loginDiv.style.display = 'none';
-                lobbyDiv.style.display = 'inline-block';
-                // gameDiv.style.display = 'inline-block';
-                // chatDiv.style.display = 'inline-block';
-                currentPlayers = data.players;
-                // console.log(currentPlayers);
-                for(let i in currentPlayers){
-                    addPlayerToLobby(currentPlayers[i]);
-                }
-                if(data.isAdmin){
-                    lobbyDivButton.style.display = 'inline-block';
-                }
-                socket.emit('newPlayer',socket.id);
-            } 
-            else{
-                alert("Sign in unsuccessul. Reason: " + data.msg);
-            }
-        });
-
-        socket.on('newPlayer', function(data){
-            currentPlayers.push(data.player);
-            addPlayerToLobby(data.player);
-        })
-
-        socket.on('deletePlayer', function(data){
-            currentPlayers = currentPlayers.filter(player => player != data.player)
-            playerListDiv.innerHTML = '';
-            for(let i in currentPlayers){
-                addPlayerToLobby(currentPlayers[i]);
-            }
-        })
-
-        socket.on('newAdmin', function(){
-            console.log('Im new admin')
-            lobbyDivButton.style.display = 'inline-block';
-        })
-
-        lobbyDivButton.onclick = function(){
-            socket.emit('start-game');
-        }
-        socket.on('start-game', function(){
-            console.log("Current players: " + currentPlayers);
-            lobbyDiv.style.display = 'none';
-            gameDiv.style.display = 'inline-block';
-            chatDiv.style.display = 'inline-block';
-            pickPieceBlack.style.border = '#ff00ff 4px solid';
-            console.log(myName);
-            orderPlayers();
-            console.log("Ordered players: " + currentPlayers);
-            for(let i = 1; i<=currentPlayers.length; i++){
-                gameDiv.innerHTML += "<div id=\"player" + i +"\">" + currentPlayers[i-1] + "</div>";
-            }
-        })
-        //Game
-
-        //CHAT-----
-        chatForm.onsubmit = function(e){
-            e.preventDefault();
-            if (!chatInput.value.replace(/\s/g, '').length){
-                return;
-            }
-            socket.emit('addToChat',{msg:chatInput.value});
-            chatInput.value = "";
-        }
-
-        socket.on('addToChat',function(msg){
-            console.log(msg.msg);
-            addToChat(msg.msg);
-            chatText.scrollTop = chatText.scrollHeight;
-
-        })
-
-        var img = {};
-        var img_names = ['black.png', 'black0.png', 'black1.png', 'black2.png', 'black3.png', 
-                         'black4.png', 'black5.png', 'black6.png', 'black7.png', 'black8.png',
-                         'black9.png', 'black10.png', 'black11.png', 'black-.png',
-                         'white.png', 'white0.png', 'white1.png', 'white2.png', 'white3.png', 
-                         'white4.png', 'white5.png', 'white6.png', 'white7.png', 'white8.png',
-                         'white9.png', 'white10.png', 'white11.png', 'white-.png'];
-
-        for(let i in img_names){
-            img[img_names[i]] = new Image();
-            img[img_names[i]].src = '/client/assets/' + img_names[i];
-        }
-        var game_width  = gameDiv.width;
-        var game_height = gameDiv.height;
-
-        socket.on('pickUpPiece',function(data){
-            
-        })
-
-
-        pickPieceWhite.click(function(){
-            console.log("Clicked");
-            pickPieceBlack.style.border = '#ff0000 4px solid';
-        })
-        // img.black = new Image();
-        // img.black.src = '/client/assets/white0.png';
-        // img.black.onload = customDrawImage;
-        
-        
-        // console.log(img.black.width);
-        // ctx.drawImage(img.black,0,0);
-        // ctx.fillText("AAA",400,400);
-        
-        
-        function addPlayerToLobby(name){
-            playerListDiv.innerHTML += '<div>' + name + '</div>';
-        }
+    
+    <script> var socket = io(); 
         
         function customDrawImage(image, posx, posy, scale = 1){
             let width = this.width/4 * scale;
             let height = this.height/4 * scale;
             // ctx.drawImage(image, posx, posy, width, height);
-        }
-
-        function orderPlayers(){
-            console.log("Ordering players");
-            while(currentPlayers[0] != myName){
-                currentPlayers.unshift(currentPlayers.pop());
-            } 
-            console.log("Players ordered!" + currentPlayers);
-        }
-
-        function addToChat(msg){
-            chatText.innerHTML += '<div>' + msg + '</div>';
-        }
-
-        
+        } 
     </script>
 
+    <script type="text/javascript" src=/client/js/login.js></script>
+    <script type="text/javascript" src=/client/js/lobby.js></script>
+    <script type="text/javascript" src=/client/js/game.js></script>
+    <script type="text/javascript" src=/client/js/chat.js></script>
 
 </html>

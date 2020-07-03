@@ -1,0 +1,72 @@
+<html>
+    <head></head>
+    <style>
+        #imageDiv{
+            z-index: 1;
+            position: absolute;
+            top: 30%;
+            left: 25%;
+            width: 30%;
+            height: 40%;
+            /* border: 3px #00ff00 solid; */
+        }
+
+        #imageA{
+            z-index: 2;
+            position: absolute;
+            top: 10%;
+            left: 0%;
+            width: 45%;
+            height: 90%;
+            /* border: 2px #aa00bb solid; */
+        }
+
+        #imageB{
+            z-index: 2;
+            position: absolute;
+            top: 10%;
+            left: 55%;
+            width: 45%;
+            height: 90%;
+            /* border: 2px #bbaa00 solid; */
+        }
+    </style>
+   
+
+    <div id = "mainDiv">
+        <div id="imageDiv">
+            <img id="imageA" src="https://pngimg.com/uploads/cat/cat_PNG50432.png" alt="Cat">
+            <img id="imageB" src="http://pngimg.com/uploads/dog/dog_PNG50348.png" alt="Dog">
+        </div>
+    </div>
+
+    <script>
+
+        var mainDiv      = document.getElementById("mainDiv");
+        var imageDiv = document.getElementById("imageDiv");
+        var imageA        = document.getElementById("imageA");
+        var imageB        = document.getElementById("imageB");
+
+
+        imageA.onmouseover = function(){
+            console.log("Clicked");
+            this.style.border = "2px #00ff00 solid";
+        };
+        imageA.onmouseout = function(){
+            console.log("Clicked");
+            this.style.border = "";
+        };
+        imageB.onmouseover = function(){
+            console.log("Clicked");
+            this.style.border = "2px #00ffff solid";
+        };
+        imageB.onmouseout = function(){
+            console.log("Clicked");
+            this.style.border = "";
+        };
+
+        
+    </script>
+
+
+</html>
