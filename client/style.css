@@ -103,7 +103,7 @@ body {
     left: 25%;
     width: 30%;
     height: 40%;
-    border: 3px #00ff00 solid;
+    /* border: 3px #00ff00 solid; */
 }
 
 #pickPieceBlack{
@@ -121,7 +121,7 @@ body {
     left: 55%;
     width: 45%;
     height: 90%;
-    border: 2px #bbaa00 solid;
+    /* border: 2px #bbaa00 solid; */
 }
 
 #chatDiv{
