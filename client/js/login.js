@@ -38,9 +38,9 @@ socket.on('loginResponse',function(data){
         for(let i in currentPlayers){
             addPlayerToLobby(currentPlayers[i]);
         }
-        if(data.isAdmin){
-            lobbyDivButton.style.display = 'inline-block';
-        }
+        // if(data.isAdmin){
+        //     lobbyDivButton.style.display = 'inline-block';
+        // }
         socket.emit('newPlayer',socket.id);
     } 
     else{

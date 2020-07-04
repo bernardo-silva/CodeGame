@@ -32,10 +32,13 @@ io.sockets.on('connection',function(socket){
 
     socket.on('login',function(data){
         isAdmin = !GS.numberPlayers;
-        console.log("check" + isAdmin);
+        console.log("Is admin? " + isAdmin);
         let status = GS.newPlayer(socket.id,data.name,socket, isAdmin); 
-        if(status.success)
+        if(status.success){
             socket.emit('loginResponse',{success: true, players:GS.playerNames, isAdmin: isAdmin});
+            if(isAdmin)
+                socket.emit('newAdmin',{})
+        }
         else
             socket.emit('loginResponse',{success: false, msg: status.msg})  
         // GS.printNames();
@@ -63,8 +66,7 @@ io.sockets.on('connection',function(socket){
             if( socket_list[i].id != data)
                 socket_list[i].emit('newPlayer',{player: GS.players[data].name});
         }
-    })
-
+    });
 
     socket.on('start-game', function(){
         console.log('Game Started!')
@@ -72,8 +74,34 @@ io.sockets.on('connection',function(socket){
             for(let i in socket_list){
                 socket_list[i].emit('start-game',{});
             }
+                // initialDraw();
+            socket_list[GS.firstPlayer()].emit('initialDraw',{available: GS.getAvailable()});
         }
-    })
+    });
+    
+    var drawCount = 0;
+    socket.on('initialDrawOver', function(data){
+        drawCount ++;
+        console.log(drawCount, GS.numberPlayers, GS.availableBPieces, GS.availableWPieces);
+        GS.printPlayerPieces();
+        if(drawCount == GS.numberPlayers){
+            console.log('First player turn');
+            socket_list[GS.nextPlayer()].emit("yourTurn",{available: GS.getAvailable()});
+            return;
+        }
+        socket_list[GS.nextPlayer()].emit('initialDraw',{available: GS.getAvailable()});
+    });
+    
+
+
+    socket.on('piecePicked', function(data){
+        GS.dealPiece(socket.id,data.color);
+        socket.emit()
+    });
+    socket.on('played', function(data){
+        // VERIFICAR O QUE FOI A JOGADA
+        socket_list[GS.nextPlayer()].emit("yourTurn",{available: GS.getAvailable()});
+    });
 
     socket.on('addToChat',function(data){
         let name = GS.players[socket.id].name;
