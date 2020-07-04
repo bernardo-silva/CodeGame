@@ -92,16 +92,18 @@ class GameStatus{
         var color = piece[0];
         var number = piece.substring(1);
         // console.log(this.players)
-        console.log("Inserting " + id + ": " + piece + " in " + this.players[id].pieces);
+        // console.log("Inserting " + id + ": " + piece + " in " + this.players[id].pieces);
         if(this.players[id].pieces.length == 0){
             this.players[id].pieces.push(piece);
             return;
         }
 
         let index = 0;
-        console.log('Coiso' + this.players[id].pieces[index]);
+        // console.log('Coiso' + this.players[id].pieces[index]);
         while(number >= this.players[id].pieces[index].substring(1)){
             index++;
+            if(this.players[id].pieces.length == index)
+                break;
         }
         if(index == 0){
             this.players[id].pieces.unshift(piece);
