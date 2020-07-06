@@ -1,0 +1,26 @@
+.loginInput {
+    position: absolute;
+    height: 30px;
+    width: 150px;
+    left: 50px;
+    top: 140px;
+}
+.loginButton {
+    position: absolute;
+    width: 50px;
+    left: 210px;
+    top: 140px;
+    height: 30px;
+}
+.loginTitle {
+    position: absolute;
+    left: 50px;
+    top: 50px;
+    opacity: 1;
+    font-weight: bold;
+    font-family: Verdana;
+    /* width: 274px; */
+    height: 86px;
+    transform-origin: 34250px 129.831px 0px;
+    font-size: 75px;
+}

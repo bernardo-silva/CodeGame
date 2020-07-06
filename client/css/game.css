@@ -1,0 +1,156 @@
+#gameDiv {
+    position: relative;
+    z-index: -1;
+    float:left;
+    width: 80%;
+    height: 98%;
+    display: none;
+    border:1px solid #000;
+}
+#player0Div{
+    position: absolute;
+    width: 60%;
+    height: 20%;
+    top: 80%;
+    left: 20%;
+    margin: 0px;
+    font-family: Arial;
+    font-size: larger;
+    border: 2px solid #00ff00;
+    /* margin: -5px; */
+    /* padding: 0px; */
+    text-align: center;
+}
+
+#player1Div{
+    position: absolute;
+    transform: rotate(90);
+    width: 15%;
+    height: 80%;
+    top: 10%;
+    left: 0%;
+    margin: 0px;
+    font-family: Arial;
+    font-size: larger;
+    border: 2px solid #00ff00;
+}
+
+#player2Div{
+    position: absolute;
+    width: 60%;
+    height: 20%;
+    top: 0%;
+    left: 20%;
+    margin: 0px;
+    font-family: Arial;
+    font-size: larger;
+    border: 2px solid #00ff00;
+}
+
+#player3Div{
+    position: absolute;
+    width: 15%;
+    height: 80%;
+    top: 10%;
+    left: 85%;
+    margin: 0px;
+    font-family: Arial;
+    font-size: larger;
+    border: 2px solid #00ff00;
+    text-align: center;
+}
+
+#player1name{
+    position: absolute;
+    top: 95%;
+    left: 70%;
+    margin: 0px;
+    font-family: Arial;
+    font-size: larger;
+}
+#player2{
+    position: absolute;
+    top: 85%;
+    left: 1%;
+    margin: 0px;
+    font-family: Arial;
+    font-size: larger;
+}
+
+#player3{
+    position: absolute;
+    top: 0%;
+    left: 5%;
+    margin: 0px;
+    font-family: Arial;
+    font-size: larger;
+}
+#player4{
+    position: absolute;
+    top: 15%;
+    left: 70%;
+    margin: 0px;
+    padding: 0px;
+    font-family: Arial;
+    font-size: larger;
+}
+
+.piecesDiv{
+    position: relative;
+    text-align: center;
+    /* float: left; */
+    width:100%;
+    /* height:100%; */
+    /* left: 50%; */
+    height: 100% ;
+    border: solid 1px #00f; 
+    margin: 0;
+    padding: 0%;
+}
+
+
+.piece{
+    position: relative;
+    width:15%;
+    height:100%;
+    border: solid 1px #f00; 
+    margin: auto;
+    padding: 0%;
+}
+.horizontal{
+    transform: rotate(90deg);
+    width:100%;
+    height:15%;
+}
+
+#pickPieceDiv{
+    display: none;
+    z-index: 1;
+    position: absolute;
+    top: 35%;
+    left: 35%;
+    width: 30%;
+    height: 30%;
+    border: 3px #00ff00 solid;
+}
+
+#pickB{
+    z-index: 2;
+    position: absolute;
+    top: 10%;
+    left: 0%;
+    width: 45%;
+    height: 90%;
+    /* border: 2px #aa00bb solid; */
+}
+
+#pickW{
+    z-index: 2;
+    position: absolute;
+    top: 10%;
+    left: 55%;
+    width: 45%;
+    height: 90%;
+    /* border: 2px #bbaa00 solid; */
+}
+

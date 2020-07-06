@@ -9,11 +9,14 @@ names = []
 for img_name in images:
     if 'png' not in img_name:
         continue
-    if 'white' in img_name:
+    if 'w' in img_name:
         continue
-    # img = cv.imread(img_name)
-    # img = cv.bitwise_not(img)
-    # cv.imwrite(img_name.replace('black','white'),img)
+    img = cv.imread(img_name)
+    img = cv.bitwise_not(img)
+    name = img_name.replace('b','w')
+    # name = name.replace('white','w')
+
+    cv.imwrite(name,img)
     names.append(img_name)
 
 print(names)

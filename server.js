@@ -96,8 +96,10 @@ io.sockets.on('connection',function(socket){
 
     socket.on('piecePicked', function(data){
         GS.dealPiece(socket.id,data.color);
-        socket.emit()
+        socket.emit('addSelfPiece',{pieces:GS.players[socket.id].pieces, nr:GS.numberPlayers})
     });
+
+
     socket.on('played', function(data){
         // VERIFICAR O QUE FOI A JOGADA
         socket_list[GS.nextPlayer()].emit("yourTurn",{available: GS.getAvailable()});

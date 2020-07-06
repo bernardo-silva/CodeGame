@@ -1,0 +1,22 @@
+#chatDiv{
+    display: none;
+    float:right;
+    min-height: 150px;
+    width: 19%;
+}
+#chatText {
+    overflow-y: auto;
+    height: 90%;
+}
+#chatForm {
+    position:absolute;
+    bottom: 0;
+    width: 19%;
+}
+#chatInput {
+    border: 3px solid #555;
+
+    /* position:absolute; */
+    /* bottom: 0; */
+    width: 100%;
+}

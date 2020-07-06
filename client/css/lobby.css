@@ -1,0 +1,10 @@
+#lobbyDiv {
+    display: none;
+    padding: 20px;
+    /* font-weight: bold; */
+    font-family: Verdana;
+    font-size: 25px;
+}
+#lobbyDiv-button{
+    display: none;
+}

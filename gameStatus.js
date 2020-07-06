@@ -91,7 +91,7 @@ class GameStatus{
         // var pieces =  this.players[id].pieces;
         var color = piece[0];
         var number = piece.substring(1);
-        // console.log(this.players)
+        // console.log(number)
         // console.log("Inserting " + id + ": " + piece + " in " + this.players[id].pieces);
         if(this.players[id].pieces.length == 0){
             this.players[id].pieces.push(piece);
@@ -99,8 +99,8 @@ class GameStatus{
         }
 
         let index = 0;
-        // console.log('Coiso' + this.players[id].pieces[index]);
-        while(number >= this.players[id].pieces[index].substring(1)){
+        while(number >= parseInt(this.players[id].pieces[index].substring(1))){
+            // console.log('Coiso' + this.players[id].pieces[index].substring(1));
             index++;
             if(this.players[id].pieces.length == index)
                 break;
@@ -109,7 +109,7 @@ class GameStatus{
             this.players[id].pieces.unshift(piece);
         }
         else{
-            if(number === this.players[id].pieces[index-1].substring(1) && color === 'b')
+            if(number === parseInt(this.players[id].pieces[index-1].substring(1)) && color === 'b')
                 index--;
 
                 this.players[id].pieces.splice(index,0,piece);

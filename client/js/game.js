@@ -34,9 +34,14 @@ socket.on('initialDraw', async function(){
         }
         playerDrew = false;
     }
-    console.log('Picking donte!');
+    console.log('Picking done!');
     socket.emit('initialDrawOver');
     pickPieceDiv.style.display = 'none';
+});
+
+socket.on('addSelfPiece',function(data){
+    // pickPieceDiv.style.display = 'inline-block';
+    drawPieces(data.pieces,data.nr,0);
 });
 
 socket.on('yourTurn',function(data){
@@ -79,4 +84,42 @@ pickW.onclick = function(){
     socket.emit('piecePicked',{color: 'w'});
     playerDrew = true;
     // pickPieceDiv.style.display = 'none';
+}
+
+function drawPieces(pieces, nrPlayers,player){
+    var positions = [[0,2],[0,1,2],[0,1,2,3]];
+    var positions2 = positions[nrPlayers-2];
+    var position = positions2[player];
+
+    var rotation = ['0deg','90deg','180deg','270deg'];
+    var rotate = rotation[position];
+
+    var playerDiv = document.getElementById("player" + position + "Div");
+    var piecesDiv = playerDiv.firstElementChild;
+    var width  = playerDiv.offsetWidth;
+    var height = piecesDiv.offsetHeight;
+    var image_width = 0;
+    var image_height = 0;
+    console.log('w: ' + width + " h: " + height);
+
+    if (position%2){
+        image_width = .15*height +"px";
+        image_height = width +"px"; 
+    }
+    else{
+        image_width = "15%";
+        image_height = "100%";
+    }
+    console.log('imgw: ' + image_width + " imgh: " + image_height);
+    piecesDiv.innerHTML = '';
+
+    for(let i=0; i<pieces.length; i++){
+        var image = document.createElement("img");
+        image.src = '/client/assets/' + pieces[i] + '.png';
+        image.style.transform = 'rotate(' + rotation + ');';
+        image.style.width = image_width;
+        image.style.height = image_height;
+
+        piecesDiv.appendChild(image);
+    }
 }
