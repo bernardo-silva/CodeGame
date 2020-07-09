@@ -29,8 +29,8 @@ socket.on('initialDraw', async function(){
     pickPieceDiv.style.display = 'inline-block';
     for(let i=0; i<3;i++){
         while(!playerDrew){
-            console.log("Still Here"); 
-            await timeout(50);
+            // console.log("Still Here"); 
+            await timeout(10);
         }
         playerDrew = false;
     }
@@ -43,6 +43,11 @@ socket.on('addSelfPiece',function(data){
     // pickPieceDiv.style.display = 'inline-block';
     drawPieces(data.pieces,data.nr,0);
 });
+socket.on('addPlayerPiece',function(data){
+    var player = playerPositions[data.player]
+    drawPieces(data.pieces,data.nr,player);
+});
+
 
 socket.on('yourTurn',function(data){
     // pickPieceDiv.style.display = 'inline-block';
@@ -95,9 +100,9 @@ function drawPieces(pieces, nrPlayers,player){
     var rotate = rotation[position];
 
     var playerDiv = document.getElementById("player" + position + "Div");
-    var piecesDiv = playerDiv.firstElementChild;
-    var width  = playerDiv.offsetWidth;
-    var height = piecesDiv.offsetHeight;
+    var piecesDiv = document.getElementById("player" + position + "PiecesDiv");;
+    var width  = parseInt(piecesDiv.offsetWidth);
+    var height = parseInt(piecesDiv.offsetHeight);
     var image_width = 0;
     var image_height = 0;
     console.log('w: ' + width + " h: " + height);
@@ -114,12 +119,25 @@ function drawPieces(pieces, nrPlayers,player){
     piecesDiv.innerHTML = '';
 
     for(let i=0; i<pieces.length; i++){
+        var div = document.createElement("div");
         var image = document.createElement("img");
         image.src = '/client/assets/' + pieces[i] + '.png';
-        image.style.transform = 'rotate(' + rotation + ');';
-        image.style.width = image_width;
-        image.style.height = image_height;
-
-        piecesDiv.appendChild(image);
+        image.style.transform = 'rotate(' + rotate + ')';
+        div.style.width = image_width;
+        div.style.height = image_height;
+        image.style.width = "100%";
+        image.style.height = "100%";
+        div.style.position = 'relative';
+        if(position==1){
+            console.log(height,image_width,image_height,pieces.length);
+            topPos = height/2 + .15*height*(i-pieces.length/2);
+            console.log("Top: " + topPos);
+            div.style.top = topPos + 'px';
+            div.style.left = '0px';
+            // image.s
+        }
+        
+        piecesDiv.appendChild(div);
+        div.appendChild(image);
     }
 }

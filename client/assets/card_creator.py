@@ -11,6 +11,8 @@ for img_name in images:
         continue
     if 'w' in img_name:
         continue
+    if 'favicon' not in img_name:
+        continue
     img = cv.imread(img_name)
     img = cv.bitwise_not(img)
     name = img_name.replace('b','w')

@@ -2,6 +2,7 @@
 var lobbyDiv = document.getElementById("lobbyDiv");
 var playerListDiv = document.getElementById("playerListDiv");
 var lobbyDivButton = document.getElementById("lobbyDivButton");
+var playerPositions = {};
 
 socket.on('newPlayer', function(data){
     currentPlayers.push(data.player);
@@ -31,6 +32,7 @@ socket.on('start-game', function(){
     gameDiv.style.display = 'inline-block';
     chatDiv.style.display = 'inline-block';
     orderPlayers();
+    getPlayerPositions();
     // for(let i = 1; i<=currentPlayers.length; i++){
     //     gameDiv.innerHTML += "<div id=\"player" + i +"\">" + currentPlayers[i-1] + "</div>";
     // }
@@ -42,4 +44,10 @@ function orderPlayers(){
         currentPlayers.unshift(currentPlayers.pop());
     } 
     console.log("Players ordered!" + currentPlayers);
+}
+
+function getPlayerPositions(){
+    for(let i = 0; i<currentPlayers.length; i++){
+        playerPositions[currentPlayers[i]] = i;
+    }
 }

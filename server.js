@@ -97,6 +97,10 @@ io.sockets.on('connection',function(socket){
     socket.on('piecePicked', function(data){
         GS.dealPiece(socket.id,data.color);
         socket.emit('addSelfPiece',{pieces:GS.players[socket.id].pieces, nr:GS.numberPlayers})
+        for(let i in socket_list){
+            if( socket_list[i].id != socket.id)
+                socket_list[i].emit('addPlayerPiece',{pieces:GS.players[socket.id].pieces,player: GS.players[socket.id].name, nr:GS.numberPlayers});
+        }
     });
 
 
