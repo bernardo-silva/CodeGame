@@ -31,13 +31,12 @@ io.sockets.on('connection',function(socket){
     socket_list[socket.id] = socket;
 
     socket.on('login',function(data){
-        isAdmin = !GS.numberPlayers;
-        console.log("Is admin? " + isAdmin);
-        let status = GS.newPlayer(socket.id,data.name,socket, isAdmin); 
+        isHost = !GS.numberPlayers;
+        console.log("Is host? " + isHost);
+        let status = GS.newPlayer(socket.id,data.name,socket, isHost); 
         if(status.success){
-            socket.emit('loginResponse',{success: true, players:GS.playerNames, isAdmin: isAdmin});
-            if(isAdmin)
-                socket.emit('newAdmin',{})
+            socket.emit('loginResponse',
+            {success: true, self: {name:data.name, id:socket.id, isHost: isHost}, others: {names:GS.playerNames,ids:GS.playerID, host:GS.getAdmin()}});
         }
         else
             socket.emit('loginResponse',{success: false, msg: status.msg})  
@@ -49,32 +48,32 @@ io.sockets.on('connection',function(socket){
         delete socket_list[socket.id];
         if (GS.checkPlayer(socket.id)){
             let name = GS.players[socket.id].name;
-            if (GS.players[socket.id].isAdmin){
+            if (GS.players[socket.id].isHost){
                 socket_list[Object.keys(socket_list)[0]].emit("newAdmin");
-                console.log('New admin ' + Object.keys(socket_list)[0]);
-                GS.players[Object.keys(socket_list)[0]].isAdmin = true;
+                console.log('New host ' + Object.keys(socket_list)[0]);
+                GS.players[Object.keys(socket_list)[0]].isHost = true;
             }
             GS.removePlayer(socket.id)
             for(let i in socket_list){
-                socket_list[i].emit('deletePlayer',{player: name});
+                socket_list[i].emit('deletePlayer',{id: socket.id});
             }
         }
     })
 
-    socket.on('newPlayer', function(data){
+    socket.on('newPlayer', function(){
+        let id = socket.id;
         for(let i in socket_list){
-            if( socket_list[i].id != data)
-                socket_list[i].emit('newPlayer',{player: GS.players[data].name});
+            if(socket_list[i].id != id && GS.checkPlayer(i))
+                socket_list[i].emit('newPlayer',{name:GS.players[id].name, id:id, isHost: GS.players[id].isHost});
         }
     });
 
     socket.on('start-game', function(){
         console.log('Game Started!')
-        if(GS.players[socket.id].isAdmin){
+        if(GS.players[socket.id].isHost){
             for(let i in socket_list){
                 socket_list[i].emit('start-game',{});
             }
-                // initialDraw();
             socket_list[GS.firstPlayer()].emit('initialDraw',{available: GS.getAvailable()});
         }
     });
@@ -96,10 +95,10 @@ io.sockets.on('connection',function(socket){
 
     socket.on('piecePicked', function(data){
         GS.dealPiece(socket.id,data.color);
-        socket.emit('addSelfPiece',{pieces:GS.players[socket.id].pieces, nr:GS.numberPlayers})
+        socket.emit('addSelfPiece',{pieces:GS.players[socket.id].pieces, id: socket.id});
         for(let i in socket_list){
             if( socket_list[i].id != socket.id)
-                socket_list[i].emit('addPlayerPiece',{pieces:GS.players[socket.id].pieces,player: GS.players[socket.id].name, nr:GS.numberPlayers});
+                socket_list[i].emit('addPlayerPiece',{pieces:GS.players[socket.id].pieces,id:socket.id});
         }
     });
 

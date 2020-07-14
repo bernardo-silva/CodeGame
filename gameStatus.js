@@ -1,14 +1,11 @@
-// import Player from './player'
-
 class Player{
-    constructor(name, id, socket, isAdmin){
+    constructor(name, id, socket, isHost){
         this.name = name;
         this.id = id;
         this.socket = socket;
-        this.isAdmin = isAdmin;
+        this.isHost = isHost;
         this.pieces = [];
     }
-
 }
 
 class GameStatus{
@@ -21,20 +18,20 @@ class GameStatus{
         this.players = {};
         this.playerNames = [];
         this.playerTurn = 0;
-        this.currentPlayers = [];
+        this.playerID = [];
     }
 
-    newPlayer(id, name, socket, isAdmin){
+    newPlayer(id, name, socket, isHost){
         if(this.playerNames.includes(name)){
             return {success: false, msg: "Name already in use"};
         }
         if(this.numberPlayers == 4){
             return {success: false, msg: "Game is full"};
         }
-        console.log("New player " + name + " with id " + id + " and " + isAdmin);
-        this.currentPlayers.push(id);
-        this.players[id] = new Player(name, id, socket, isAdmin);
+        console.log("New player " + name + " with id " + id + " and " + isHost);
+        this.playerID.push(id);
         this.playerNames.push(name);
+        this.players[id] = new Player(name, id, socket, isHost);
         console.log(this.playerNames);
         this.numberPlayers ++;
         return {success: true, msg: "Login successful"};
@@ -50,12 +47,14 @@ class GameStatus{
         }
     }
 
-    checkPlayer(id){
-        // console.log(Object.keys(this.players));
-        // console.log(id);
-        // console.log(Object.keys(this.players).includes(id));
-        console.log(Object.keys(this.players));
-        return Object.keys(this.players).includes(id);
+    checkPlayer(id){return Object.keys(this.players).includes(id);}
+
+    getAdmin(){
+        for(let i in this.players){
+            if (this.players[i].isHost){
+                return i;
+            }
+        }
     }
 
     dealPiece(id,color){
@@ -75,12 +74,12 @@ class GameStatus{
 
     firstPlayer(){
         this.playerTurn = Math.floor(Math.random()*this.numberPlayers);
-        console.log("First player is " + this.currentPlayers[this.playerTurn]); 
-        return this.currentPlayers[this.playerTurn];
+        console.log("First player is " + this.playerID[this.playerTurn]); 
+        return this.playerID[this.playerTurn];
     }
     nextPlayer(){
         this.playerTurn = (this.playerTurn + 1)%this.numberPlayers;
-        return this.currentPlayers[this.playerTurn];
+        return this.playerID[this.playerTurn];
     }
 
     getAvailable(){
@@ -88,11 +87,8 @@ class GameStatus{
     }
 
     insertPiece(id,piece){
-        // var pieces =  this.players[id].pieces;
         var color = piece[0];
         var number = piece.substring(1);
-        // console.log(number)
-        // console.log("Inserting " + id + ": " + piece + " in " + this.players[id].pieces);
         if(this.players[id].pieces.length == 0){
             this.players[id].pieces.push(piece);
             return;
@@ -100,7 +96,6 @@ class GameStatus{
 
         let index = 0;
         while(number >= parseInt(this.players[id].pieces[index].substring(1))){
-            // console.log('Coiso' + this.players[id].pieces[index].substring(1));
             index++;
             if(this.players[id].pieces.length == index)
                 break;
@@ -114,9 +109,8 @@ class GameStatus{
 
                 this.players[id].pieces.splice(index,0,piece);
         }
-        // this.players[id].pieces = pieces;
-        // console.log("Insert:",pieces, this.players[id].pieces);
     }
+
     printNames(){
         Object.values(this.players).forEach((value) => {
             console.log(value.name);

@@ -2,8 +2,9 @@ var loginDiv       = document.getElementById("loginDiv");
 var loginDivForm   = document.getElementById("loginDivForm");
 var loginDivInput  = document.getElementById("loginDiv-input");
 var loginDivButton = document.getElementById("loginDiv-button");
-var myName = '';
 
+
+var board = null;
 //Login
 
 loginDivButton.onclick = function() {
@@ -11,7 +12,6 @@ loginDivButton.onclick = function() {
         alert("Name is too short");
         return;
     }
-    myName = loginDivInput.value;   
     socket.emit('login',{name:loginDivInput.value});
 }
 
@@ -21,33 +21,24 @@ loginDivForm.onsubmit = function(e){
         alert("Name is too short");
         return;
     }
-    myName = loginDivInput.value;   
     socket.emit('login',{name:loginDivInput.value});
 }
 
-var currentPlayers = [];
-
 socket.on('loginResponse',function(data){
     if(data.success){
+        board = new Board(data.self.name, data.self.id, data.self.isHost);
+        board.currentPlayers(data.others.names, data.others.ids,data.others.host);
         loginDiv.style.display = 'none';
         lobbyDiv.style.display = 'inline-block';
-        // gameDiv.style.display = 'inline-block';
-        // chatDiv.style.display = 'inline-block';
-        currentPlayers = data.players;
-        // console.log(currentPlayers);
-        for(let i in currentPlayers){
-            addPlayerToLobby(currentPlayers[i]);
+
+        board.addPlayersToLobby(playerListDiv);
+
+        if(data.self.isHost){
+            lobbyDivButton.style.display = 'inline-block';
         }
-        // if(data.isAdmin){
-        //     lobbyDivButton.style.display = 'inline-block';
-        // }
-        socket.emit('newPlayer',socket.id);
+        socket.emit('newPlayer');
     } 
     else{
         alert("Sign in unsuccessul. Reason: " + data.msg);
     }
 });
-
-function addPlayerToLobby(name){
-    playerListDiv.innerHTML += '<div>' + name + '</div>';
-}

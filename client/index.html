@@ -39,11 +39,11 @@
         </div>
         <div id='player1Div'>
             <div id ='player1PiecesDiv' class='piecesDiv'>
-                <img id="pickB" class="piece horizontal" src="/client/assets/b.png" alt="Black Piece">
+                <!-- <img id="pickB" class="piece horizontal" src="/client/assets/b.png" alt="Black Piece">
                 <img id="pickB" src="/client/assets/b.png" alt="Black Piece">
                 <img id="pickB" src="/client/assets/b.png" alt="Black Piece">
                 <img id="pickB" src="/client/assets/b.png" alt="Black Piece">
-                <img id="pickB" src="/client/assets/b.png" alt="Black Piece">
+                <img id="pickB" src="/client/assets/b.png" alt="Black Piece"> -->
 
             </div>
         </div>
@@ -69,15 +69,9 @@
     
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     
-    <script> var socket = io(); 
-        
-        function customDrawImage(image, posx, posy, scale = 1){
-            let width = this.width/4 * scale;
-            let height = this.height/4 * scale;
-            // ctx.drawImage(image, posx, posy, width, height);
-        } 
-    </script>
+    <script> var socket = io();</script>
 
+    <script type="text/javascript" src=/client/js/board.js></script>
     <script type="text/javascript" src=/client/js/login.js></script>
     <script type="text/javascript" src=/client/js/lobby.js></script>
     <script type="text/javascript" src=/client/js/game.js></script>
