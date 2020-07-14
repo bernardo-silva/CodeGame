@@ -5,6 +5,7 @@ class Player{
         this.socket = socket;
         this.isHost = isHost;
         this.pieces = [];
+        this.revealedPieces = [];
     }
 }
 
@@ -91,6 +92,7 @@ class GameStatus{
         var number = piece.substring(1);
         if(this.players[id].pieces.length == 0){
             this.players[id].pieces.push(piece);
+            this.players[id].revealedPieces.push(false);
             return;
         }
 
@@ -102,12 +104,36 @@ class GameStatus{
         }
         if(index == 0){
             this.players[id].pieces.unshift(piece);
+            this.players[id].revealedPieces.unshift(false);
         }
         else{
             if(number === parseInt(this.players[id].pieces[index-1].substring(1)) && color === 'b')
                 index--;
 
                 this.players[id].pieces.splice(index,0,piece);
+                this.players[id].revealedPieces.splice(index,0,false);
+        }
+    }
+    getShownPieces(id){
+        var pieces = [];
+        for(let i=0; i<this.players[id].pieces.length; i++){
+            if(this.players[id].pieces.length == this.players[id].revealedPieces.length){
+                if(this.players[id].revealedPieces[i])
+                    pieces.push(this.players[id].pieces[i]);
+
+                else
+                    pieces.push(this.players[id].pieces[i][0]);
+            }
+        }
+        return pieces;
+    }
+
+    guess(player, target_player, target_position, piece_guess){
+        if(this.players[target_player].pieces[target_position] == piece_guess){
+            this.players[target_player].revealedPieces[target_position] = true;
+        }
+        else{
+            
         }
     }
 

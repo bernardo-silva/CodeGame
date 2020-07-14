@@ -88,8 +88,7 @@ class Board{
         var positions2 = positions[this.numberPlayers-2];
         var position = positions2[player];
 
-        var rotation = ['0deg','90deg','180deg','270deg'];
-        var rotate = rotation[position];
+        var classNames = ['upright','rotatedRight','downwards','rotatedLeft'];
 
         var piecesDiv = document.getElementById("player" + position + "PiecesDiv");;
         var width  = parseInt(piecesDiv.offsetWidth);
@@ -112,19 +111,19 @@ class Board{
         for(let i=0; i<this.players[id].pieces.length; i++){
             var image = document.createElement("img");
             image.src = '/client/assets/' + this.players[id].pieces[i] + '.png';
-            image.style.transform = 'rotate(' + rotate + ')';
+
+            image.className = classNames[position];
             image.style.width = image_width;
             image.style.height = image_height;
-            image.style.position = 'relative';
+            image.style.border = 'solid 1px #000'
+
             if(position==1){
-                image.style.transformOrigin = 'left bottom';
-                image.style.transform += ' translateY(-100%)';
-                // console.log(height,image_width,image_height,pieces.length);
                 var topPos = height/2 + .15*height*(i-this.players[id].pieces.length/2);
-                // console.log("Top: " + topPos);
-                div.style.top = topPos + 'px';
-                div.style.left = '0px';
-                // image.s
+                image.style.top = topPos + 'px';
+            }
+            if(position == 3){
+                var topPos = height/2 + .15*height*(-i+this.players[id].pieces.length/2-1);
+                image.style.top = topPos + 'px';
             }
             
             piecesDiv.appendChild(image);

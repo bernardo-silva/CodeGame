@@ -25,6 +25,8 @@ var socket_list = {};
 var GS = new GameStatus();
 
 var io = require('socket.io')(server,{});
+
+var drawCount = 0;
 io.sockets.on('connection',function(socket){
     console.log('Connected ' + socket.id);
 
@@ -78,14 +80,19 @@ io.sockets.on('connection',function(socket){
         }
     });
     
-    var drawCount = 0;
     socket.on('initialDrawOver', function(data){
         drawCount ++;
+        console.log('Initial draw: ' + drawCount +'/' + GS.numberPlayers)
         console.log(drawCount, GS.numberPlayers, GS.availableBPieces, GS.availableWPieces);
         GS.printPlayerPieces();
         if(drawCount == GS.numberPlayers){
             console.log('First player turn');
-            socket_list[GS.nextPlayer()].emit("yourTurn",{available: GS.getAvailable()});
+            let nextPlayer = GS.nextPlayer();
+            socket_list[nextPlayer].emit("yourTurn",{});
+            for(let i in socket_list){
+                if(socket_list[i].id != nextPlayer)
+                    socket_list[i].emit('currentPlayerTurn',{id:socket.id});
+            }
             return;
         }
         socket_list[GS.nextPlayer()].emit('initialDraw',{available: GS.getAvailable()});
@@ -98,7 +105,7 @@ io.sockets.on('connection',function(socket){
         socket.emit('addSelfPiece',{pieces:GS.players[socket.id].pieces, id: socket.id});
         for(let i in socket_list){
             if( socket_list[i].id != socket.id)
-                socket_list[i].emit('addPlayerPiece',{pieces:GS.players[socket.id].pieces,id:socket.id});
+                socket_list[i].emit('addPlayerPiece',{pieces:GS.getShownPieces(socket.id),id:socket.id});
         }
     });
 

@@ -1,23 +1,13 @@
 
 
 // ---- GAME ----
-var gameDiv       = document.getElementById("gameDiv");
+var gameDiv      = document.getElementById("gameDiv");
 var pickPieceDiv = document.getElementById("pickPieceDiv");
 var pickB        = document.getElementById("pickB");
 var pickW        = document.getElementById("pickW");
+var guessTip     = document.getElementById("guessTip");
+var currentPlayerTurn  = document.getElementById("currentPlayerTurn");
 
-// var img = {};
-// var img_names = ['black.png', 'black0.png', 'black1.png', 'black2.png', 'black3.png', 
-// 'black4.png', 'black5.png', 'black6.png', 'black7.png', 'black8.png',
-// 'black9.png', 'black10.png', 'black11.png', 'black-.png',
-// 'white.png', 'white0.png', 'white1.png', 'white2.png', 'white3.png', 
-// 'white4.png', 'white5.png', 'white6.png', 'white7.png', 'white8.png',
-// 'white9.png', 'white10.png', 'white11.png', 'white-.png'];
-
-// for(let i in img_names){
-//     img[img_names[i]] = new Image();
-//     img[img_names[i]].src = '/client/assets/' + img_names[i];
-// }
 var game_width  = gameDiv.width;
 var game_height = gameDiv.height;
 var playerDrew = false;
@@ -49,10 +39,22 @@ socket.on('addPlayerPiece',function(data){
 });
 
 
-socket.on('yourTurn',function(data){
-    // pickPieceDiv.style.display = 'inline-block';
-        // availableB = data.available[0];
-        // availableW = data.available[1];
+socket.on('yourTurn',async function(data){
+    console.log('Your turn to play');
+    currentPlayerTurn.style.display = 'none';
+    pickPieceDiv.style.display = 'inline-block';
+    playerDrew = false;
+    while(!playerDrew){
+        await timeout(10);
+    }
+    console.log('Piece picked');
+    pickPieceDiv.style.display = 'none';
+    guessTip.style.display = 'inline-block';
+});
+
+socket.on('currentPlayerTurn', function(data){
+    currentPlayerTurn.innerHTML = board.players[data.id].name + '\' turn!';
+    currentPlayerTurn.style.display = 'inline-block';
 });
 
 
