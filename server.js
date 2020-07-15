@@ -34,7 +34,6 @@ io.sockets.on('connection',function(socket){
 
     socket.on('login',function(data){
         isHost = !GS.numberPlayers;
-        console.log("Is host? " + isHost);
         let status = GS.newPlayer(socket.id,data.name,socket, isHost); 
         if(status.success){
             socket.emit('loginResponse',
@@ -71,20 +70,17 @@ io.sockets.on('connection',function(socket){
     });
 
     socket.on('start-game', function(){
-        console.log('Game Started!')
-        if(GS.players[socket.id].isHost){
+        if(GS.players[socket.id].isHost && GS.numberPlayers > 1){
             for(let i in socket_list){
                 socket_list[i].emit('start-game',{});
             }
             socket_list[GS.firstPlayer()].emit('initialDraw',{available: GS.getAvailable()});
+            console.log('Game Started!');
         }
     });
     
     socket.on('initialDrawOver', function(data){
         drawCount ++;
-        console.log('Initial draw: ' + drawCount +'/' + GS.numberPlayers)
-        console.log(drawCount, GS.numberPlayers, GS.availableBPieces, GS.availableWPieces);
-        GS.printPlayerPieces();
         if(drawCount == GS.numberPlayers){
             console.log('First player turn');
             let nextPlayer = GS.nextPlayer();

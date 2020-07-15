@@ -132,7 +132,7 @@
     border: 3px #00ff00 solid;
 }
 
-#pickB{
+.selectB{
     z-index: 2;
     position: absolute;
     top: 10%;
@@ -142,7 +142,7 @@
     /* border: 2px #aa00bb solid; */
 }
 
-#pickW{
+.selectW{
     z-index: 2;
     position: absolute;
     top: 10%;
@@ -175,4 +175,25 @@
     width: 40%;
     height: 12%;
     border: 3px #ff0000 solid;
+}
+
+#guessDiv{
+    display: none;
+    text-align: center;
+    z-index: 1;
+    position: absolute;
+    top: 35%;
+    left: 35%;
+    width: 30%;
+    height: 30%;
+    border: 3px #00ff00 solid;
+}
+
+#guessColorDiv{
+    display: none;
+}
+
+#guessNumberDiv{
+    display: none;
+    top: 50%;
 }

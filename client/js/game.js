@@ -50,6 +50,7 @@ socket.on('yourTurn',async function(data){
     console.log('Piece picked');
     pickPieceDiv.style.display = 'none';
     guessTip.style.display = 'inline-block';
+    board.setClickable();
 });
 
 socket.on('currentPlayerTurn', function(data){

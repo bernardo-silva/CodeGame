@@ -26,7 +26,7 @@ loginDivForm.onsubmit = function(e){
 
 socket.on('loginResponse',function(data){
     if(data.success){
-        board = new Board(data.self.name, data.self.id, data.self.isHost);
+        board = new Board(socket, data.self.name, data.self.id, data.self.isHost);
         board.currentPlayers(data.others.names, data.others.ids,data.others.host);
         loginDiv.style.display = 'none';
         lobbyDiv.style.display = 'inline-block';

@@ -33,7 +33,6 @@ class GameStatus{
         this.playerID.push(id);
         this.playerNames.push(name);
         this.players[id] = new Player(name, id, socket, isHost);
-        console.log(this.playerNames);
         this.numberPlayers ++;
         return {success: true, msg: "Login successful"};
     }
@@ -44,7 +43,6 @@ class GameStatus{
             this.playerNames = this.playerNames.filter(player => player != this.players[id].name);
             delete this.players[id];
             this.numberPlayers --;
-            console.log(this.playerNames);
         }
     }
 

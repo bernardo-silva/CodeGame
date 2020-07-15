@@ -8,7 +8,8 @@ class Player{
 }
 
 class Board{
-    constructor(name, id, isHost){
+    constructor(socket, name, id, isHost){
+        this.socket = socket;
         this.selfName = name;
         this.selfId = id;
         this.selfIsHost = isHost;
@@ -113,6 +114,7 @@ class Board{
             image.src = '/client/assets/' + this.players[id].pieces[i] + '.png';
 
             image.className = classNames[position];
+            image.className += ' ' + this.players[id].pieces[i];
             image.style.width = image_width;
             image.style.height = image_height;
             image.style.border = 'solid 1px #000'
@@ -126,10 +128,89 @@ class Board{
                 image.style.top = topPos + 'px';
             }
             
+            if(id != this.selfId){
+                image.className += ' otherPlayerPiece';
+            }
             piecesDiv.appendChild(image);
         }
     }
+    
+    
+    setClickable(){
+        var pieces = document.getElementsByClassName('otherPlayerPiece');
+        console.log(pieces);
+        for(let i=0; i<pieces.length; i++){
+            var splited = pieces[i].className.split(" ");
+            if(splited[1].length != 1){ //////VERIFICAR AQUI A COR
+                continue;
+            }
+            pieces[i].onmouseover = this.highlight;
+            pieces[i].onmouseout = this.unHighlight;
+            pieces[i].onclick = this.makeGuess;
+        }
+    }
+    
+    setUnclickable(){
+        var pieces = document.getElementsByClassName('otherPlayerPiece');
+        for(let i=0; i<pieces.length; i++){
+            pieces[i].onmouseover = this.unHighlight;
+            pieces[i].onmouseout  = this.unHighlight;
+        }
+    }
 
+    makeGuess(){
+        board.setUnclickable();
+
+        console.log("Clicked");
+        var guess = '';
+
+        var guessTip       = document.getElementById('guessTip');
+        var guessDiv       = document.getElementById('guessDiv');
+        var guessColorDiv  = document.getElementById('guessColorDiv');
+        var guessNumberDiv = document.getElementById('guessNumberDiv');
+
+        var guessB = document.getElementById('guessB');
+        var guessW = document.getElementById('guessW');
+
+        var guessNumberSelect = document.getElementById('guessNumberSelect');
+        var guessSubmitButton = document.getElementById('guessSubmitButton');
+
+        guessB.onmouseover = board.highlight;
+        guessB.onmouseout  = board.unHighlight;
+        guessW.onmouseover = board.highlight;
+        guessW.onmouseout  = board.unHighlight;
+
+        guessB.onclick = function(){
+            guess += 'b';
+            guessColorDiv.style.display = 'none';
+            guessNumberDiv.style.display = 'inline-block';
+        };
+        guessW.onclick = function(){
+            guess += 'w';
+            guessColorDiv.style.display = 'none';
+            guessNumberDiv.style.display = 'inline-block';
+        }
+
+        guessSubmitButton.onclick = function(){
+            guess += guessNumberSelect.value;
+            guessDiv.style.display = 'none';
+            board.socket.emit('played',{guess:guess});
+            return guess;
+        };
+
+        guessTip.style.display = 'none';
+        guessDiv.style.display = 'inline-block';
+        guessColorDiv.style.display = 'inline-block';
+
+    }
+
+
+    highlight(){
+        this.style.border = "2px #00ff00 solid";
+    }
+    unHighlight(){
+        this.style.border = "1px #000 solid";
+    }
 
     firstPlayer(){
         this.playerTurn = Math.floor(Math.random()*this.numberPlayers);

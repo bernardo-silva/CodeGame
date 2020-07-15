@@ -35,8 +35,34 @@
         </div>
         <div id="pickPieceDiv">
             <b style="font-size: 100%; font-family: Arial;">Choose a piece:</b>
-            <img id="pickB" src="/client/assets/b.png" alt="Black Piece">
-            <img id="pickW"  src="/client/assets/w.png" alt="White Piece">
+            <img id="pickB" class = "selectB" src="/client/assets/b.png" alt="Black Piece">
+            <img id="pickW" class = "selectW" src="/client/assets/w.png" alt="White Piece">
+        </div>
+        <div id="guessDiv">
+            <div id="guessColorDiv">
+                <b style="font-size: 100%; font-family: Arial;">Choose color to guess:</b>
+                <img id="guessB" class = "selectB" src="/client/assets/b.png" alt="Black Piece">
+                <img id="guessW" class = "selectW" src="/client/assets/w.png" alt="White Piece">
+            </div>
+
+            <div id="guessNumberDiv">  
+                <b style="font-size: 100%; font-family: Arial;">Choose number to guess:</b>
+                <select name="guessNumberSelect" id="guessNumberSelect">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                </select>
+                <button id="guessSubmitButton">Guess!</button>
+            </div>  
         </div>
         <div id='player0Div' class='piecesDiv'>
             <div id ='player0PiecesDiv' class='piecesDiv'></div>
