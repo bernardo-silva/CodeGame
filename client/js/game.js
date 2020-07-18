@@ -17,6 +17,7 @@ socket.on('initialDraw', async function () {
     pickPieceDiv.style.display = 'inline-block';
     //Picking 3 initial pieces
     for (let i = 0; i < 3; i++) {
+        console.log(i);
         while (!playerDrew) {
             await timeout(10);
         }
@@ -65,7 +66,7 @@ socket.on('guessAgain', async function (data) {
 
 socket.on('pieceRevealed', function (data){
     board.revealPiece(data.revealed);
-})
+});
 
 socket.on('revealPiece', async function (data) {
     console.log('You have to reveal a piece');
@@ -105,7 +106,7 @@ pickB.onclick = function () {
     socket.emit('piecePicked', { color: 'b' });
     // pickPieceDiv.style.display = 'none';
     playerDrew = true;
-}
+};
 
 pickW.onclick = function () {
     if (board.availableWPieces == 0)
@@ -113,55 +114,4 @@ pickW.onclick = function () {
     socket.emit('piecePicked', { color: 'w' });
     playerDrew = true;
     // pickPieceDiv.style.display = 'none';
-}
-
-function drawPieces(pieces, nrPlayers, player) {
-    var positions = [[0, 2], [0, 1, 2], [0, 1, 2, 3]];
-    var positions2 = positions[nrPlayers - 2];
-    var position = positions2[player];
-
-    var rotation = ['0deg', '90deg', '180deg', '270deg'];
-    var rotate = rotation[position];
-
-    var playerDiv = document.getElementById("player" + position + "Div");
-    var piecesDiv = document.getElementById("player" + position + "PiecesDiv");;
-    var width = parseInt(piecesDiv.offsetWidth);
-    var height = parseInt(piecesDiv.offsetHeight);
-    var image_width = 0;
-    var image_height = 0;
-    console.log('w: ' + width + " h: " + height);
-
-    if (position % 2) {
-        image_width = .15 * height + "px";
-        image_height = width + "px";
-    }
-    else {
-        image_width = "15%";
-        image_height = "100%";
-    }
-    console.log('imgw: ' + image_width + " imgh: " + image_height);
-    piecesDiv.innerHTML = '';
-
-    for (let i = 0; i < pieces.length; i++) {
-        var div = document.createElement("div");
-        var image = document.createElement("img");
-        image.src = '/client/assets/' + pieces[i] + '.png';
-        image.style.transform = 'rotate(' + rotate + ')';
-        div.style.width = image_width;
-        div.style.height = image_height;
-        image.style.width = "100%";
-        image.style.height = "100%";
-        div.style.position = 'relative';
-        if (position == 1) {
-            console.log(height, image_width, image_height, pieces.length);
-            topPos = height / 2 + .15 * height * (i - pieces.length / 2);
-            console.log("Top: " + topPos);
-            div.style.top = topPos + 'px';
-            div.style.left = '0px';
-            // image.s
-        }
-
-        piecesDiv.appendChild(div);
-        div.appendChild(image);
-    }
-}
+};

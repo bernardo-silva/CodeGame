@@ -7,6 +7,7 @@ class Player {
         this.pieces = [];
         this.revealedPieces = [];
         this.lastPicked = null;
+        this.lost = false;
     }
 }
 
@@ -78,7 +79,12 @@ class GameStatus {
         return this.playerID[this.playerTurn];
     }
     nextPlayer() {
-        this.playerTurn = (this.playerTurn + 1) % this.numberPlayers;
+        while(1){
+            console.log('still here');
+            this.playerTurn = (this.playerTurn + 1) % this.numberPlayers;
+            if(!this.players[this.playerID[this.playerTurn]].lost)
+                break;
+        }
         return this.playerID[this.playerTurn];
     }
 
@@ -106,7 +112,6 @@ class GameStatus {
             this.players[id].revealedPieces.unshift(false);
         }
         else {
-            console.log(number, parseInt(this.players[id].pieces[index - 1].substring(1)));
             if (number == parseInt(this.players[id].pieces[index - 1].substring(1)) && color === 'b')
                 index--;
 
@@ -133,6 +138,20 @@ class GameStatus {
     checkGuess(target_player, target_position, piece_guess) {
         if (this.players[target_player].pieces[target_position] == piece_guess) {
             this.players[target_player].revealedPieces[target_position] = true;
+            return true;
+        }
+        return false;
+    }
+
+    checkWin(){
+        let losers = 0;
+        for(let i in this.players){
+            if(this.players[i].revealedPieces.every(v => v === true)){
+                losers ++;
+                this.players[i].lost = true;
+            }
+        }
+        if(losers == this.numberPlayers -1){
             return true;
         }
         return false;

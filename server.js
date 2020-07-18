@@ -77,8 +77,9 @@ io.sockets.on('connection',function(socket){
     
     socket.on('initialDrawOver', function(data){
         drawCount ++;
-        let nextPlayer = GS.nextPlayer();
+        var nextPlayer = GS.nextPlayer();
         if(drawCount == GS.numberPlayers){
+    
             console.log('First player turn');
             socket_list[nextPlayer].emit("yourTurn",{});
             emitAll('currentPlayerTurn',{id:socket.id}, nextPlayer);
@@ -94,8 +95,7 @@ io.sockets.on('connection',function(socket){
         let pos = GS.dealPiece(socket.id,data.color);
         socket.emit('addSelfPiece',{pieces:GS.players[socket.id].pieces, id: socket.id, revealed:GS.players[socket.id].revealedPieces, pos: pos});
         
-        emitAll('addPlayerPiece',{pieces:GS.getShownPieces(socket.id),id:socket.id},socket.id)
-
+        emitAll('addPlayerPiece',{pieces:GS.getShownPieces(socket.id),id:socket.id},socket.id);
     });
 
 
@@ -127,9 +127,9 @@ io.sockets.on('connection',function(socket){
         emitAll('addToChat',{msg:"(" + name + "): " + data.msg});
     });
 
-})
+});
 
-emitAll(msg,data,skip = null){
+function emitAll(msg,data,skip = null){
     for(let i in socket_list){
         if(i != skip){
             socket_list[i].emit(msg,data);
