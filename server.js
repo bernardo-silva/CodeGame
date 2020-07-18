@@ -55,9 +55,7 @@ io.sockets.on('connection',function(socket){
                 GS.players[Object.keys(socket_list)[0]].isHost = true;
             }
             GS.removePlayer(socket.id)
-            for(let i in socket_list){
-                socket_list[i].emit('deletePlayer',{id: socket.id});
-            }
+            emitAll('deletePlayer',{id: socket.id});
         }
     })
 
@@ -71,9 +69,7 @@ io.sockets.on('connection',function(socket){
 
     socket.on('start-game', function(){
         if(GS.players[socket.id].isHost && GS.numberPlayers > 1){
-            for(let i in socket_list){
-                socket_list[i].emit('start-game',{});
-            }
+            emitAll('start-game',{});
             socket_list[GS.firstPlayer()].emit('initialDraw',{available: GS.getAvailable()});
             console.log('Game Started!');
         }
@@ -81,43 +77,62 @@ io.sockets.on('connection',function(socket){
     
     socket.on('initialDrawOver', function(data){
         drawCount ++;
+        let nextPlayer = GS.nextPlayer();
         if(drawCount == GS.numberPlayers){
             console.log('First player turn');
-            let nextPlayer = GS.nextPlayer();
             socket_list[nextPlayer].emit("yourTurn",{});
-            for(let i in socket_list){
-                if(socket_list[i].id != nextPlayer)
-                    socket_list[i].emit('currentPlayerTurn',{id:socket.id});
-            }
+            emitAll('currentPlayerTurn',{id:socket.id}, nextPlayer);
+
             return;
         }
-        socket_list[GS.nextPlayer()].emit('initialDraw',{available: GS.getAvailable()});
+        socket_list[nextPlayer].emit('initialDraw',{available: GS.getAvailable()});
     });
     
 
 
     socket.on('piecePicked', function(data){
-        GS.dealPiece(socket.id,data.color);
-        socket.emit('addSelfPiece',{pieces:GS.players[socket.id].pieces, id: socket.id});
-        for(let i in socket_list){
-            if( socket_list[i].id != socket.id)
-                socket_list[i].emit('addPlayerPiece',{pieces:GS.getShownPieces(socket.id),id:socket.id});
-        }
+        let pos = GS.dealPiece(socket.id,data.color);
+        socket.emit('addSelfPiece',{pieces:GS.players[socket.id].pieces, id: socket.id, revealed:GS.players[socket.id].revealedPieces, pos: pos});
+        
+        emitAll('addPlayerPiece',{pieces:GS.getShownPieces(socket.id),id:socket.id},socket.id)
+
     });
 
 
     socket.on('played', function(data){
-        // VERIFICAR O QUE FOI A JOGADA
-        socket_list[GS.nextPlayer()].emit("yourTurn",{available: GS.getAvailable()});
+        console.log('Player ' + socket.id + ' guessed ' + data.guess +' with target ' + data.target +' at position ' + data.position);
+        var success = GS.checkGuess(data.target, data.position, data.guess);
+        if(success){
+            console.log('Guess was right!');
+            socket_list[data.target].emit('pieceRevealed',{revealed: GS.players[data.target].revealedPieces});
+            
+            emitAll('addPlayerPiece',{pieces:GS.getShownPieces(data.target),id:data.target},data.target);
+
+            socket.emit('guessAgain',{available: GS.getAvailable()})
+        }
+        else{
+            GS.players[socket.id].revealedPieces[GS.players[socket.id].lastPicked] = true;
+            socket_list[socket.id].emit('pieceRevealed',{revealed: GS.players[socket.id].revealedPieces});
+            
+            emitAll('addPlayerPiece',{pieces:GS.getShownPieces(socket.id),id:socket.id},socket.id);
+           
+            socket_list[GS.nextPlayer()].emit("yourTurn",{available: GS.getAvailable()});
+        }
     });
 
     socket.on('addToChat',function(data){
         let name = GS.players[socket.id].name;
         console.log("(" + name + "): " + data.msg);
-        for(let i in socket_list){
-            socket_list[i].emit('addToChat',{msg:"(" + name + "): " + data.msg});
-        }
-    })
+
+        emitAll('addToChat',{msg:"(" + name + "): " + data.msg});
+    });
 
 })
 
+emitAll(msg,data,skip = null){
+    for(let i in socket_list){
+        if(i != skip){
+            socket_list[i].emit(msg,data);
+        }
+    }
+}

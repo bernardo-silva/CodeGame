@@ -1,199 +1,190 @@
 #gameDiv {
-    position: relative;
-    z-index: -1;
-    float:left;
-    width: 80%;
-    height: 98%;
-    display: none;
-    border:1px solid #000;
+  position: relative;
+  z-index: -1;
+  float: left;
+  width: 80%;
+  height: 98%;
+  display: none;
+  border: 1px solid #000;
 }
-#player0Div{
-    position: absolute;
-    width: 60%;
-    height: 20%;
-    top: 80%;
-    left: 20%;
-    margin: 0px;
-    font-family: Arial;
-    font-size: larger;
-    /* border: 2px solid #00ff00; */
-    /* margin: -5px; */
-    /* padding: 0px; */
-    text-align: center;
-}
-
-#player1Div{
-    position: absolute;
-    transform: rotate(90);
-    width: 15%;
-    height: 80%;
-    top: 10%;
-    left: 0%;
-    margin: 0px;
-    font-family: Arial;
-    font-size: larger;
-    /* border: 2px solid #00ff00; */
+#player0Div {
+  position: absolute;
+  width: 60%;
+  height: 20%;
+  top: 80%;
+  left: 20%;
+  margin: 0px;
+  font-family: Arial;
+  font-size: larger;
+  /* border: 2px solid #00ff00; */
+  /* margin: -5px; */
+  /* padding: 0px; */
+  text-align: center;
 }
 
-#player2Div{
-    position: absolute;
-    width: 60%;
-    height: 20%;
-    top: 0%;
-    left: 20%;
-    margin: 0px;
-    font-family: Arial;
-    font-size: larger;
-    /* border: 2px solid #00ff00; */
+#player1Div {
+  position: absolute;
+  transform: rotate(90);
+  width: 15%;
+  height: 80%;
+  top: 10%;
+  left: 0%;
+  margin: 0px;
+  font-family: Arial;
+  font-size: larger;
+  /* border: 2px solid #00ff00; */
 }
 
-#player3Div{
-    position: absolute;
-    width: 15%;
-    height: 80%;
-    top: 10%;
-    left: 85%;
-    margin: 0px;
-    font-family: Arial;
-    font-size: larger;
-    /* border: 2px solid #00ff00; */
-    text-align: center;
+#player2Div {
+  position: absolute;
+  width: 60%;
+  height: 20%;
+  top: 0%;
+  left: 20%;
+  margin: 0px;
+  font-family: Arial;
+  font-size: larger;
+  /* border: 2px solid #00ff00; */
 }
 
-#player1name{
-    position: absolute;
-    top: 95%;
-    left: 70%;
-    margin: 0px;
-    font-family: Arial;
-    font-size: larger;
-}
-#player2{
-    position: absolute;
-    top: 85%;
-    left: 1%;
-    margin: 0px;
-    font-family: Arial;
-    font-size: larger;
+#player3Div {
+  position: absolute;
+  width: 15%;
+  height: 80%;
+  top: 10%;
+  left: 85%;
+  margin: 0px;
+  font-family: Arial;
+  font-size: larger;
+  /* border: 2px solid #00ff00; */
+  text-align: center;
 }
 
-#player3{
-    position: absolute;
-    top: 0%;
-    left: 5%;
-    margin: 0px;
-    font-family: Arial;
-    font-size: larger;
+#player1name {
+  position: absolute;
+  top: 95%;
+  left: 70%;
+  margin: 0px;
+  font-family: Arial;
+  font-size: larger;
 }
-#player4{
-    position: absolute;
-    top: 15%;
-    left: 70%;
-    margin: 0px;
-    padding: 0px;
-    font-family: Arial;
-    font-size: larger;
-}
-
-.piecesDiv{
-    position: relative;
-    text-align: center;
-    width:100%;
-    height: 100% ;
-    /* border: solid 1px #00f;  */
-    margin: 0;
-    padding: 0%;
+#player2 {
+  position: absolute;
+  top: 85%;
+  left: 1%;
+  margin: 0px;
+  font-family: Arial;
+  font-size: larger;
 }
 
-.downwards{
-    transform: rotate(180deg);
+#player3 {
+  position: absolute;
+  top: 0%;
+  left: 5%;
+  margin: 0px;
+  font-family: Arial;
+  font-size: larger;
 }
-.rotatedRight{
-    transform: translateY(-100%) rotate(90deg);
-    transform-origin: left bottom;
-    position: absolute;
-    left: 0px;
-}
-.rotatedLeft{
-    transform: translateY(-100%) translateX(-100%) rotate(270deg);
-    transform-origin: right bottom;
-    position: absolute;
-    left: 100%;
-}
-
-#pickPieceDiv{
-    display: none;
-    z-index: 1;
-    position: absolute;
-    top: 35%;
-    left: 35%;
-    width: 30%;
-    height: 30%;
-    border: 3px #00ff00 solid;
+#player4 {
+  position: absolute;
+  top: 15%;
+  left: 70%;
+  margin: 0px;
+  padding: 0px;
+  font-family: Arial;
+  font-size: larger;
 }
 
-.selectB{
-    z-index: 2;
-    position: absolute;
-    top: 10%;
-    left: 0%;
-    width: 45%;
-    height: 90%;
-    /* border: 2px #aa00bb solid; */
+.piecesDiv {
+  position: relative;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  /* border: solid 1px #00f;  */
+  margin: 0;
+  padding: 0%;
 }
 
-.selectW{
-    z-index: 2;
-    position: absolute;
-    top: 10%;
-    left: 55%;
-    width: 45%;
-    height: 90%;
-    /* border: 2px #bbaa00 solid; */
+.downwards {
+  transform: rotate(180deg);
+}
+.rotatedRight {
+  transform: translateY(-100%) rotate(90deg);
+  transform-origin: left bottom;
+  position: absolute;
+  left: 0px;
+}
+.rotatedLeft {
+  transform: translateY(-100%) translateX(-100%) rotate(270deg);
+  transform-origin: right bottom;
+  position: absolute;
+  left: 100%;
 }
 
-#currentPlayerTurn{
-    text-align: center;
-    font-weight: bold;
-    font-size: 200%;
-    display: none;
-    z-index: 1;
-    position: absolute;
-    top: 44%;
-    left: 30%;
-    width: 40%;
-    height: 12%;
-    border: 3px #ff0000 solid;
-}
-#guessTip{
-    text-align: center;
-    display: none;
-    z-index: 1;
-    position: absolute;
-    top: 44%;
-    left: 30%;
-    width: 40%;
-    height: 12%;
-    border: 3px #ff0000 solid;
+#pickPieceDiv {
+  display: none;
+  z-index: 1;
+  position: absolute;
+  top: 35%;
+  left: 35%;
+  width: 30%;
+  height: 30%;
+  border: 3px #00ff00 solid;
 }
 
-#guessDiv{
-    display: none;
-    text-align: center;
-    z-index: 1;
-    position: absolute;
-    top: 35%;
-    left: 35%;
-    width: 30%;
-    height: 30%;
-    border: 3px #00ff00 solid;
+.selectB {
+  z-index: 2;
+  position: absolute;
+  top: 10%;
+  left: 0%;
+  width: 45%;
+  height: 90%;
+  /* border: 2px #aa00bb solid; */
 }
 
-#guessColorDiv{
-    display: none;
+.selectW {
+  z-index: 2;
+  position: absolute;
+  top: 10%;
+  left: 55%;
+  width: 45%;
+  height: 90%;
+  /* border: 2px #bbaa00 solid; */
 }
 
-#guessNumberDiv{
-    display: none;
-    top: 50%;
+#currentPlayerTurn {
+  text-align: center;
+  font-weight: bold;
+  font-size: 200%;
+  display: none;
+  z-index: 1;
+  position: absolute;
+  top: 44%;
+  left: 30%;
+  width: 40%;
+  height: 12%;
+  border: 3px #ff0000 solid;
+}
+#guessTip {
+  text-align: center;
+  display: none;
+  z-index: 1;
+  position: absolute;
+  top: 44%;
+  left: 30%;
+  width: 40%;
+  height: 12%;
+  border: 3px #ff0000 solid;
+}
+
+#guessDiv {
+  display: none;
+  text-align: center;
+  z-index: 1;
+  position: absolute;
+  top: 35%;
+  left: 35%;
+  width: 30%;
+  height: 30%;
+  border: 3px #00ff00 solid;
 }

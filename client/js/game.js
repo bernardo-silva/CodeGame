@@ -1,23 +1,23 @@
 
 
 // ---- GAME ----
-var gameDiv      = document.getElementById("gameDiv");
+var gameDiv = document.getElementById("gameDiv");
 var pickPieceDiv = document.getElementById("pickPieceDiv");
-var pickB        = document.getElementById("pickB");
-var pickW        = document.getElementById("pickW");
-var guessTip     = document.getElementById("guessTip");
-var currentPlayerTurn  = document.getElementById("currentPlayerTurn");
+var pickB = document.getElementById("pickB");
+var pickW = document.getElementById("pickW");
+var guessTip = document.getElementById("guessTip");
+var currentPlayerTurn = document.getElementById("currentPlayerTurn");
 
-var game_width  = gameDiv.width;
+var game_width = gameDiv.width;
 var game_height = gameDiv.height;
 var playerDrew = false;
 const timeout = async ms => new Promise(res => setTimeout(res, ms));
 
-socket.on('initialDraw', async function(){
+socket.on('initialDraw', async function () {
     pickPieceDiv.style.display = 'inline-block';
     //Picking 3 initial pieces
-    for(let i=0; i<3;i++){
-        while(!playerDrew){
+    for (let i = 0; i < 3; i++) {
+        while (!playerDrew) {
             await timeout(10);
         }
         playerDrew = false;
@@ -27,24 +27,25 @@ socket.on('initialDraw', async function(){
     pickPieceDiv.style.display = 'none';
 });
 
-socket.on('addSelfPiece',function(data){
-    board.dealPieces(data.id, data.pieces);
+socket.on('addSelfPiece', function (data) {
+    board.dealPieces(data.id, data.pieces, data.revealed,data.pos);
     // drawPieces(data.pieces,data.nr,0);
     board.drawPieces(data.id);
+    board.revealPiece(data.revealed);
 });
-socket.on('addPlayerPiece',function(data){
+socket.on('addPlayerPiece', function (data) {
     board.dealPieces(data.id, data.pieces);
     // drawPieces(data.pieces,data.nr,player);
     board.drawPieces(data.id);
 });
 
 
-socket.on('yourTurn',async function(data){
+socket.on('yourTurn', async function (data) {
     console.log('Your turn to play');
     currentPlayerTurn.style.display = 'none';
     pickPieceDiv.style.display = 'inline-block';
     playerDrew = false;
-    while(!playerDrew){
+    while (!playerDrew) {
         await timeout(10);
     }
     console.log('Piece picked');
@@ -53,75 +54,95 @@ socket.on('yourTurn',async function(data){
     board.setClickable();
 });
 
-socket.on('currentPlayerTurn', function(data){
+socket.on('guessAgain', async function (data) {
+    console.log('Your turn to play');
+    currentPlayerTurn.style.display = 'none';
+
+    pickPieceDiv.style.display = 'none';
+    guessTip.style.display = 'inline-block';
+    board.setClickable();
+});
+
+socket.on('pieceRevealed', function (data){
+    board.revealPiece(data.revealed);
+})
+
+socket.on('revealPiece', async function (data) {
+    console.log('You have to reveal a piece');
+    currentPlayerTurn.style.display = 'none';
+    board.revealed = false;
+    board.pickPieceToReveal();
+});
+
+socket.on('currentPlayerTurn', function (data) {
     currentPlayerTurn.innerHTML = board.players[data.id].name + '\' turn!';
     currentPlayerTurn.style.display = 'inline-block';
 });
 
 
-pickB.onmouseover = function(){
+pickB.onmouseover = function () {
     if (board.availableBPieces > 0)
         this.style.border = "2px #00ff00 solid";
     else
         this.style.border = "2px #ff0000 solid";
 };
-pickB.onmouseout = function(){
+pickB.onmouseout = function () {
     this.style.border = "";
 };
-pickW.onmouseover = function(){
+pickW.onmouseover = function () {
     if (board.availableWPieces > 0)
         this.style.border = "2px #00ff00 solid";
     else
         this.style.border = "2px #ff0000 solid";
 };
-pickW.onmouseout = function(){
+pickW.onmouseout = function () {
     this.style.border = "";
 };
 
-pickB.onclick = function(){
+pickB.onclick = function () {
     if (board.availableBPieces == 0)
         return;
-    socket.emit('piecePicked',{color: 'b'});
+    socket.emit('piecePicked', { color: 'b' });
     // pickPieceDiv.style.display = 'none';
     playerDrew = true;
 }
 
-pickW.onclick = function(){
+pickW.onclick = function () {
     if (board.availableWPieces == 0)
         return;
-    socket.emit('piecePicked',{color: 'w'});
+    socket.emit('piecePicked', { color: 'w' });
     playerDrew = true;
     // pickPieceDiv.style.display = 'none';
 }
 
-function drawPieces(pieces, nrPlayers,player){
-    var positions = [[0,2],[0,1,2],[0,1,2,3]];
-    var positions2 = positions[nrPlayers-2];
+function drawPieces(pieces, nrPlayers, player) {
+    var positions = [[0, 2], [0, 1, 2], [0, 1, 2, 3]];
+    var positions2 = positions[nrPlayers - 2];
     var position = positions2[player];
 
-    var rotation = ['0deg','90deg','180deg','270deg'];
+    var rotation = ['0deg', '90deg', '180deg', '270deg'];
     var rotate = rotation[position];
 
     var playerDiv = document.getElementById("player" + position + "Div");
     var piecesDiv = document.getElementById("player" + position + "PiecesDiv");;
-    var width  = parseInt(piecesDiv.offsetWidth);
+    var width = parseInt(piecesDiv.offsetWidth);
     var height = parseInt(piecesDiv.offsetHeight);
     var image_width = 0;
     var image_height = 0;
     console.log('w: ' + width + " h: " + height);
 
-    if (position%2){
-        image_width = .15*height +"px";
-        image_height = width +"px"; 
+    if (position % 2) {
+        image_width = .15 * height + "px";
+        image_height = width + "px";
     }
-    else{
+    else {
         image_width = "15%";
         image_height = "100%";
     }
     console.log('imgw: ' + image_width + " imgh: " + image_height);
     piecesDiv.innerHTML = '';
 
-    for(let i=0; i<pieces.length; i++){
+    for (let i = 0; i < pieces.length; i++) {
         var div = document.createElement("div");
         var image = document.createElement("img");
         image.src = '/client/assets/' + pieces[i] + '.png';
@@ -131,15 +152,15 @@ function drawPieces(pieces, nrPlayers,player){
         image.style.width = "100%";
         image.style.height = "100%";
         div.style.position = 'relative';
-        if(position==1){
-            console.log(height,image_width,image_height,pieces.length);
-            topPos = height/2 + .15*height*(i-pieces.length/2);
+        if (position == 1) {
+            console.log(height, image_width, image_height, pieces.length);
+            topPos = height / 2 + .15 * height * (i - pieces.length / 2);
             console.log("Top: " + topPos);
             div.style.top = topPos + 'px';
             div.style.left = '0px';
             // image.s
         }
-        
+
         piecesDiv.appendChild(div);
         div.appendChild(image);
     }
