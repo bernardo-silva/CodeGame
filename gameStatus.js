@@ -80,7 +80,6 @@ class GameStatus {
     }
     nextPlayer() {
         while(1){
-            console.log('still here');
             this.playerTurn = (this.playerTurn + 1) % this.numberPlayers;
             if(!this.players[this.playerID[this.playerTurn]].lost)
                 break;
@@ -146,6 +145,7 @@ class GameStatus {
     checkWin(){
         let losers = 0;
         for(let i in this.players){
+            console.log(this.players[i].revealedPieces);
             if(this.players[i].revealedPieces.every(v => v === true)){
                 losers ++;
                 this.players[i].lost = true;

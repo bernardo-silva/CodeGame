@@ -152,21 +152,18 @@
   /* border: 2px #bbaa00 solid; */
 }
 
-#currentPlayerTurn {
+#endTurnButton{
+  position: absolute;
+  left: 45%;
+  top: 60%;
+  width: 10%;
+  font-weight: bold;
+}
+
+#textTip{
   text-align: center;
   font-weight: bold;
   font-size: 200%;
-  display: none;
-  z-index: 1;
-  position: absolute;
-  top: 44%;
-  left: 30%;
-  width: 40%;
-  height: 12%;
-  border: 3px #ff0000 solid;
-}
-#guessTip {
-  text-align: center;
   display: none;
   z-index: 1;
   position: absolute;

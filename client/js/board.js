@@ -198,7 +198,7 @@ class Board {
         var classes = this.className.split(" ")
         guess += classes[1];
 
-        var guessTip = document.getElementById('guessTip');
+        var textTip = document.getElementById('textTip');
         var guessDiv = document.getElementById('guessDiv');
 
         var guessNumberSelect = document.getElementById('guessNumberSelect');
@@ -212,7 +212,7 @@ class Board {
             return guess;
         };
 
-        guessTip.style.display = 'none';
+        textTip.style.display = 'none';
         guessDiv.style.display = 'inline-block';
 
     }
@@ -230,24 +230,6 @@ class Board {
         }
     }
 
-    pickPieceToReveal() {
-        var pieces = document.getElementsByClassName('ownPiece');
-        for (let i = 0; i < pieces.length; i++) {
-            if (this.players[this.selfId].revealedPieces[i]) {
-                continue;
-            }
-            pieces[i].onmouseover = this.highlight;
-            pieces[i].onmouseout = this.unHighlight;
-
-            pieces[i].onclick = function () {
-                board.setUnclickable();
-                var pos = this.className.split(' ')[2];
-                board.players[board.selfId].revealedPieces[pos] = true;
-                board.revealed = true;
-                board.revealPiece(board.players[board.selfId].revealedPieces);
-            };
-        }
-    }
 
     highlight() {
         this.style.border = "2px #00ff00 solid";

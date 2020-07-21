@@ -82,7 +82,7 @@ io.sockets.on('connection',function(socket){
     
             console.log('First player turn');
             socket_list[nextPlayer].emit("yourTurn",{});
-            emitAll('currentPlayerTurn',{id:socket.id}, nextPlayer);
+            emitAll('currentPlayerTurn',{id:nextPlayer}, nextPlayer);
 
             return;
         }
@@ -109,6 +109,9 @@ io.sockets.on('connection',function(socket){
             emitAll('addPlayerPiece',{pieces:GS.getShownPieces(data.target),id:data.target},data.target);
 
             socket.emit('guessAgain',{available: GS.getAvailable()})
+            if(GS.checkWin()){
+                socket.emit('gameOver');
+            }
         }
         else{
             GS.players[socket.id].revealedPieces[GS.players[socket.id].lastPicked] = true;
@@ -116,8 +119,16 @@ io.sockets.on('connection',function(socket){
             
             emitAll('addPlayerPiece',{pieces:GS.getShownPieces(socket.id),id:socket.id},socket.id);
            
-            socket_list[GS.nextPlayer()].emit("yourTurn",{available: GS.getAvailable()});
+            let nextPlayer = GS.nextPlayer();
+            emitAll('currentPlayerTurn',{id:nextPlayer}, nextPlayer);
+            socket_list[nextPlayer].emit("yourTurn",{available: GS.getAvailable()});
         }
+    });
+
+    socket.on('endTurn',function(){
+        let nextPlayer = GS.nextPlayer();
+        emitAll('currentPlayerTurn',{id:nextPlayer}, nextPlayer);
+        socket_list[nextPlayer].emit("yourTurn",{available: GS.getAvailable()});
     });
 
     socket.on('addToChat',function(data){
