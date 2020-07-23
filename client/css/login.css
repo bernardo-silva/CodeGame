@@ -7,7 +7,7 @@
 }
 .loginButton {
     position: absolute;
-    width: 50px;
+    /* width: 50px; */
     left: 210px;
     top: 140px;
     height: 30px;

@@ -7,6 +7,7 @@ var pickB             = document.getElementById("pickB");
 var pickW             = document.getElementById("pickW");
 var textTip           = document.getElementById("textTip");
 var currentPlayerTurn = document.getElementById("currentPlayerTurn");
+var guessDiv = document.getElementById('guessDiv');
 var endTurnButton     = document.getElementById('endTurnButton');
 
 var game_width  = gameDiv.width;
@@ -18,13 +19,12 @@ socket.on('initialDraw', async function () {
     pickPieceDiv.style.display = 'inline-block';
     //Picking 3 initial pieces
     for (let i = 0; i < 3; i++) {
-        console.log(i);
         while (!playerDrew) {
             await timeout(10);
         }
         playerDrew = false;
     }
-    console.log('Picking done!');
+    // console.log('Picking done!');
     socket.emit('initialDrawOver');
     pickPieceDiv.style.display = 'none';
 });
@@ -43,14 +43,16 @@ socket.on('addPlayerPiece', function (data) {
 
 
 socket.on('yourTurn', async function (data) {
-    console.log('Your turn to play');
-    textTip.style.display = 'none';
-    pickPieceDiv.style.display = 'inline-block';
-    playerDrew = false;
-    while (!playerDrew) {
-        await timeout(10);
+    // console.log('Your turn to play');
+    if(board.availableBPieces + board.availableWPieces > 0){
+        textTip.style.display = 'none';
+        pickPieceDiv.style.display = 'inline-block';
+        playerDrew = false;
+        while (!playerDrew) {
+            await timeout(10);
+        }
+        // console.log('Piece picked');
     }
-    console.log('Piece picked');
     pickPieceDiv.style.display = 'none';
     textTip.style.display = 'inline-block';
     textTip.innerText = 'Click on a piece to make a guess!';
@@ -58,7 +60,7 @@ socket.on('yourTurn', async function (data) {
 });
 
 socket.on('guessAgain', async function (data) {
-    console.log('Your turn to play');
+    // console.log('Your turn to play');
     endTurnButton.style.display = 'inline-block';
     // textTip.style.display = 'none';
 
@@ -74,6 +76,7 @@ socket.on('pieceRevealed', function (data){
 }); 
 
 socket.on('currentPlayerTurn', function (data) {
+    guessDiv.style.display = 'none';
     textTip.innerText = board.players[data.id].name + '\'s turn!';
     textTip.style.display = 'inline-block';
 });

@@ -17,7 +17,7 @@ chatForm.onsubmit = function(e){
 };
 
 socket.on('addToChat',function(msg){
-    console.log(msg.msg);
+    // console.log(msg.msg);
     addToChat(msg.msg);
     chatText.scrollTop = chatText.scrollHeight;
 

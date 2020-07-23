@@ -106,7 +106,8 @@
   left: 35%;
   width: 30%;
   height: 30%;
-  border: 3px #00ff00 solid;
+  border: 2px #aaa solid;
+  border-radius: 5px;
 }
 
 .selectB {
@@ -148,7 +149,7 @@
   left: 30%;
   width: 40%;
   height: 12%;
-  border: 3px #ff0000 solid;
+  /* border: 3px #ff0000 solid; */
 }
 
 #guessDiv {
@@ -156,9 +157,9 @@
   text-align: center;
   z-index: 1;
   position: absolute;
-  top: 35%;
-  left: 35%;
-  width: 30%;
-  height: 30%;
-  border: 3px #00ff00 solid;
+  top: 50%;
+  left: 30%;
+  width: 40%;
+  /* height: 30%; */
+  /* border: 3px #00ff00 solid; */
 }

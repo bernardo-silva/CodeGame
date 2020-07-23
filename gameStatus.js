@@ -149,7 +149,6 @@ class GameStatus {
     checkWin(){
         let losers = 0;
         for(let i in this.players){
-            console.log(this.players[i].revealedPieces);
             if(this.players[i].revealedPieces.every(v => v === true)){
                 losers ++;
                 this.players[i].lost = true;
