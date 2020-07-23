@@ -2,16 +2,25 @@
     display: none;
     float:right;
     min-height: 150px;
-    width: 19%;
+    left: -1%;
+    width: 18%;
+    position: relative;
+    background: #eee;
+    top: 5%;
+    border: 1px #000 solid;
+    height: 90%;
+    border-radius: 15px;
 }
 #chatText {
     overflow-y: auto;
     height: 90%;
+    padding:5px;
 }
 #chatForm {
-    position:absolute;
+    position:relative;
     bottom: 0;
-    width: 19%;
+    width: 98%;
+    left:1%;
 }
 #chatInput {
     border: 3px solid #555;
@@ -19,4 +28,10 @@
     /* position:absolute; */
     /* bottom: 0; */
     width: 100%;
+}
+.msg {
+    background: linear-gradient(to bottom, #fff 0%, #e0e0e0 100%);
+    border: 1px black solid;
+    border-radius: 5px;
+    padding: 5px;
 }

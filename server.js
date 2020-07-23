@@ -20,6 +20,11 @@ if (port == null || port == "") {
 server.listen(port);
 console.log('Server started.');
 
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 var socket_list = {};
 // var player_list = {};
 var GS = new GameStatus();
@@ -49,7 +54,7 @@ io.sockets.on('connection',function(socket){
         delete socket_list[socket.id];
         if (GS.checkPlayer(socket.id)){
             let name = GS.players[socket.id].name;
-            if (GS.players[socket.id].isHost){
+            if (GS.players[socket.id].isHost && GS.players.length > 0){
                 socket_list[Object.keys(socket_list)[0]].emit("newAdmin");
                 console.log('New host ' + Object.keys(socket_list)[0]);
                 GS.players[Object.keys(socket_list)[0]].isHost = true;
@@ -69,6 +74,7 @@ io.sockets.on('connection',function(socket){
 
     socket.on('start-game', function(){
         if(GS.players[socket.id].isHost && GS.numberPlayers > 1){
+            GS.gameStarted = true;
             emitAll('start-game',{});
             socket_list[GS.firstPlayer()].emit('initialDraw',{available: GS.getAvailable()});
             console.log('Game Started!');
@@ -99,18 +105,24 @@ io.sockets.on('connection',function(socket){
     });
 
 
-    socket.on('played', function(data){
+    socket.on('played', async function(data){
         console.log('Player ' + socket.id + ' guessed ' + data.guess +' with target ' + data.target +' at position ' + data.position);
         var success = GS.checkGuess(data.target, data.position, data.guess);
         if(success){
             console.log('Guess was right!');
             socket_list[data.target].emit('pieceRevealed',{revealed: GS.players[data.target].revealedPieces});
             
+            socket.emit('ownGuess',{success:success});
+            emitAll('guessResult',{player: socket.id, target:data.target, piece: data.guess,success:success, position:data.position}, socket.id); 
             emitAll('addPlayerPiece',{pieces:GS.getShownPieces(data.target),id:data.target},data.target);
+            
+            await sleep(3000);
 
             socket.emit('guessAgain',{available: GS.getAvailable()})
             if(GS.checkWin()){
-                socket.emit('gameOver');
+                emitAll('gameOver',{});
+                GS.endGame();
+                drawCount = 0;
             }
         }
         else{
@@ -118,7 +130,12 @@ io.sockets.on('connection',function(socket){
             socket_list[socket.id].emit('pieceRevealed',{revealed: GS.players[socket.id].revealedPieces});
             
             emitAll('addPlayerPiece',{pieces:GS.getShownPieces(socket.id),id:socket.id},socket.id);
-           
+            
+            socket.emit('ownGuess',{success:success});
+            emitAll('guessResult',{player: socket.id, target:data.target, piece: data.guess,success:success, position:data.position}, socket.id);
+            
+            await sleep(3000);
+
             let nextPlayer = GS.nextPlayer();
             emitAll('currentPlayerTurn',{id:nextPlayer}, nextPlayer);
             socket_list[nextPlayer].emit("yourTurn",{available: GS.getAvailable()});

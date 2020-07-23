@@ -62,10 +62,16 @@ class Board {
 
     startGame() {
         //Ordering players
+        var nameDivs = document.getElementsByClassName('name');
+        var positions = [[0, 2], [0, 1, 2], [0, 1, 2, 3]];
+        var positions2 = positions[this.numberPlayers - 2];
+
         while (this.playerNames[0] != this.selfName) {
             this.playerNames.unshift(this.playerNames.pop());
         }
-
+        for(let i = 0; i<this.playerNames.length; i++){
+            nameDivs[positions2[i]].innerText = this.playerNames[i];
+        }
     }
 
     // checkPlayer(id){return Object.keys(this.players).includes(id);}

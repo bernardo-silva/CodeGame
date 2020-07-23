@@ -24,5 +24,5 @@ socket.on('addToChat',function(msg){
 });
 
 function addToChat(msg){
-    chatText.innerHTML += '<div>' + msg + '</div>';
+    chatText.innerHTML += '<div class="msg">' + msg + '</div>';
 }

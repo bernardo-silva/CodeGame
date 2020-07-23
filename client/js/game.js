@@ -63,6 +63,8 @@ socket.on('guessAgain', async function (data) {
     // textTip.style.display = 'none';
 
     pickPieceDiv.style.display = 'none';
+
+    textTip.innerText = 'Guess again or end turn!'
     textTip.style.display = 'inline-block';
     board.setClickable();
 });
@@ -72,10 +74,24 @@ socket.on('pieceRevealed', function (data){
 }); 
 
 socket.on('currentPlayerTurn', function (data) {
-    textTip.innerText = board.players[data.id].name + '\' turn!';
+    textTip.innerText = board.players[data.id].name + '\'s turn!';
     textTip.style.display = 'inline-block';
 });
 
+socket.on('guessResult',function(data){
+    var text = board.players[data.player].name + ' guessed ' + data.piece + ' on position ';
+    text += data.position + ' and was ' + (data.success? 'right!' : 'wrong!');
+    textTip.innerText = text;
+});
+
+socket.on('ownGuess',function(data){
+    textTip.style.display = 'inline-block';
+    textTip.innerText = 'Guess was ' + (data.success? 'right!': 'wrong!');  
+});
+
+socket.on('gameOver', function(data){
+    location.reload();
+});
 
 pickB.onmouseover = function () {
     if (board.availableBPieces > 0)

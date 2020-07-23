@@ -25,20 +25,5 @@ socket.on('start-game', function(){
     gameDiv.style.display = 'inline-block';
     chatDiv.style.display = 'inline-block';
     board.startGame();
-    // orderPlayers();
-    // getPlayerPositions();
 });
 
-// function orderPlayers(){
-//     console.log("Ordering players");
-//     while(currentPlayers[0] != myName){
-//         currentPlayers.unshift(currentPlayers.pop());
-//     } 
-//     console.log("Players ordered!" + currentPlayers);
-// }
-
-// function getPlayerPositions(){
-//     for(let i = 0; i<currentPlayers.length; i++){
-//         playerPositions[currentPlayers[i]] = i; 
-//     }
-// }

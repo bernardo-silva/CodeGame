@@ -25,11 +25,14 @@ class GameStatus {
     }
 
     newPlayer(id, name, socket, isHost) {
-        if (this.playerNames.includes(name)) {
-            return { success: false, msg: "Name already in use" };
+        if (this.gameStarted) {
+            return { success: false, msg: "There is currently a game being played" };
         }
         if (this.numberPlayers == 4) {
             return { success: false, msg: "Game is full" };
+        }
+        if (this.playerNames.includes(name)) {
+            return { success: false, msg: "Name already in use" };
         }
         console.log("New player " + name + " with id " + id + " and " + isHost);
         this.playerID.push(id);
@@ -43,6 +46,7 @@ class GameStatus {
         console.log(this.players[id].name + ' left');
         if (!this.gameStarted) {
             this.playerNames = this.playerNames.filter(player => player != this.players[id].name);
+            this.playerID = this.playerID.filter(player => player != id );
             delete this.players[id];
             this.numberPlayers--;
         }
@@ -155,6 +159,18 @@ class GameStatus {
             return true;
         }
         return false;
+    }
+
+    endGame(){
+        this.availableBPieces = ['b0', 'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10', 'b11'];//,'b-'
+        this.availableWPieces = ['w0', 'w1', 'w2', 'w3', 'w4', 'w5', 'w6', 'w7', 'w8', 'w9', 'w10', 'w11'];//,'w-'
+
+        this.numberPlayers = 0;
+        this.gameStarted = false;
+        this.players = {};
+        this.playerNames = [];
+        this.playerTurn = 0;
+        this.playerID = [];
     }
 
     printNames() {
