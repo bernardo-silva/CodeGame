@@ -101,7 +101,9 @@ class GameStatus {
         if (this.players[id].pieces.length == 0) {
             this.players[id].pieces.push(piece);
             this.players[id].revealedPieces.push(false);
-            return;
+            this.players[id].lastPicked = 0;
+            console.log
+            return 0;
         }
 
         let index = 0;

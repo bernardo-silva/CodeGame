@@ -68,9 +68,17 @@
   font-weight: bold;
 }
 
-/* .player1{  */
+/* .ownPiece{
+  transition: transform 2s;
+}
 
-/* } */
+.otherPlayerPiece{
+  transition: transform 2s;
+} */
+.transition{
+  transition: transform 2s;
+}
+
 
 .piecesDiv {
   position: relative;
@@ -162,4 +170,45 @@
   width: 40%;
   /* height: 30%; */
   /* border: 3px #00ff00 solid; */
+}
+
+#availableDiv{
+  display: none;
+  float:right;
+  /* min-height: 150px; */
+  left: -1%;
+  width: 18%;
+  position: relative;
+  background: #ebe;
+  top: 0%;
+  border: 1px #000 solid;
+  height: 10%;
+  border-radius: 10px;
+}
+
+.square{
+  width: 10%;
+  height: 30%;
+  margin: 4%;
+  position: relative;
+}
+.black{
+  background: #000;
+  border: #000 solid 1px;
+}
+.white{
+  background: #fff;
+  border: #000 solid 1px;
+  top: -30%;
+}
+
+#availableB{
+  position: relative;
+  left: 20%;
+  top: -40%;
+}
+#availableW{
+  position: relative;
+  left: 20%;
+  top: -70%;
 }

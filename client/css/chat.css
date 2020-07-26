@@ -6,9 +6,9 @@
     width: 18%;
     position: relative;
     background: #eee;
-    top: 5%;
+    top: 2%;
     border: 1px #000 solid;
-    height: 90%;
+    height: 85%;
     border-radius: 15px;
 }
 #chatText {

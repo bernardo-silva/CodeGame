@@ -23,6 +23,7 @@ lobbyDivButton.onclick = function(){
 socket.on('start-game', function(){
     lobbyDiv.style.display = 'none';
     gameDiv.style.display = 'inline-block';
+    availableDiv.style.display = 'inline-block';
     chatDiv.style.display = 'inline-block';
     board.startGame();
 });

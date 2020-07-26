@@ -2,11 +2,17 @@
 
 // ---- GAME ----
 var gameDiv           = document.getElementById("gameDiv");
+var availableDiv           = document.getElementById("availableDiv");
+
+var availableB             = document.getElementById("availableB");
+var availableW             = document.getElementById("availableW");
+
+
 var pickPieceDiv      = document.getElementById("pickPieceDiv");
 var pickB             = document.getElementById("pickB");
 var pickW             = document.getElementById("pickW");
+
 var textTip           = document.getElementById("textTip");
-var currentPlayerTurn = document.getElementById("currentPlayerTurn");
 var guessDiv = document.getElementById('guessDiv');
 var endTurnButton     = document.getElementById('endTurnButton');
 
@@ -18,7 +24,8 @@ const timeout   = async ms => new Promise(res => setTimeout(res, ms));
 socket.on('initialDraw', async function () {
     pickPieceDiv.style.display = 'inline-block';
     //Picking 3 initial pieces
-    for (let i = 0; i < 3; i++) {
+    var nrPieces = (board.numberPlayers > 3)?3:4;
+    for (let i = 0; i < nrPieces; i++) {
         while (!playerDrew) {
             await timeout(10);
         }
@@ -30,13 +37,13 @@ socket.on('initialDraw', async function () {
 });
 
 socket.on('addSelfPiece', function (data) {
-    board.dealPieces(data.id, data.pieces, data.revealed,data.pos);
+    board.dealPieces(data.id, data.pieces, data.revealed, data.pos);
     // drawPieces(data.pieces,data.nr,0);
     board.drawPieces(data.id);
-    board.revealPiece(data.revealed);
+    board.revealPiece(socket.id, data.revealed);
 });
 socket.on('addPlayerPiece', function (data) {
-    board.dealPieces(data.id, data.pieces);
+    board.dealPieces(data.id, data.pieces, data.revealed,data.pos);
     // drawPieces(data.pieces,data.nr,player);
     board.drawPieces(data.id);
 });
@@ -72,17 +79,21 @@ socket.on('guessAgain', async function (data) {
 });
 
 socket.on('pieceRevealed', function (data){
-    board.revealPiece(data.revealed);
+    board.revealPiece(data.id, data.revealed, data.pieces);
 }); 
 
 socket.on('currentPlayerTurn', function (data) {
+    endTurnButton.style.display = 'none';
     guessDiv.style.display = 'none';
     textTip.innerText = board.players[data.id].name + '\'s turn!';
     textTip.style.display = 'inline-block';
 });
 
 socket.on('guessResult',function(data){
-    var text = board.players[data.player].name + ' guessed ' + data.piece + ' on position ';
+    var piece = data.piece.replace('b', 'Black ');
+    piece = piece.replace('w', 'White ');
+
+    var text = board.players[data.player].name + ' guessed ' + piece + ' on position ';
     text += data.position + ' and was ' + (data.success? 'right!' : 'wrong!');
     textTip.innerText = text;
 });

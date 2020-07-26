@@ -3,14 +3,11 @@ var app = express();
 var server = require('http').Server(app);
 var GameStatus = require('./gameStatus')
 
-
-
 app.get('/',function(req, res) {
     res.sendFile(__dirname + '/client/index.html');
 });
 
 app.use('/client', express.static(__dirname + '/client'));
-
 
 let port = process.env.PORT;
 if (port == null || port == "") {
@@ -19,19 +16,16 @@ if (port == null || port == "") {
 
 server.listen(port);
 console.log('Server started.');
-
+var io = require('socket.io')(server,{});
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 var socket_list = {};
-// var player_list = {};
 var GS = new GameStatus();
-
-var io = require('socket.io')(server,{});
-
 var drawCount = 0;
+
 io.sockets.on('connection',function(socket){
     console.log('Connected ' + socket.id);
 
@@ -98,10 +92,11 @@ io.sockets.on('connection',function(socket){
 
 
     socket.on('piecePicked', function(data){
-        let pos = GS.dealPiece(socket.id,data.color);
+        GS.dealPiece(socket.id,data.color);
+        let pos = GS.players[socket.id].lastPicked;
         socket.emit('addSelfPiece',{pieces:GS.players[socket.id].pieces, id: socket.id, revealed:GS.players[socket.id].revealedPieces, pos: pos});
         
-        emitAll('addPlayerPiece',{pieces:GS.getShownPieces(socket.id),id:socket.id},socket.id);
+        emitAll('addPlayerPiece',{pieces:GS.getShownPieces(socket.id),id:socket.id,revealed:GS.players[socket.id].revealedPieces, pos: pos},socket.id);
     });
 
 
@@ -110,13 +105,13 @@ io.sockets.on('connection',function(socket){
         var success = GS.checkGuess(data.target, data.position, data.guess);
         if(success){
             console.log('Guess was right!');
-            socket_list[data.target].emit('pieceRevealed',{revealed: GS.players[data.target].revealedPieces});
+            // socket_list[data.target].emit('pieceRevealed',{revealed: GS.players[data.target].revealedPieces});
             
             socket.emit('ownGuess',{success:success});
             emitAll('guessResult',{player: socket.id, target:data.target, piece: data.guess,success:success, position:data.position}, socket.id); 
-            emitAll('addPlayerPiece',{pieces:GS.getShownPieces(data.target),id:data.target},data.target);
+            emitAll('pieceRevealed',{pieces:GS.getShownPieces(data.target),id:data.target, revealed: GS.players[data.target].revealedPieces});
             
-            await sleep(3000);
+            await sleep(5000);
 
             socket.emit('guessAgain',{available: GS.getAvailable()})
             if(GS.checkWin()){
@@ -127,9 +122,9 @@ io.sockets.on('connection',function(socket){
         }
         else{
             GS.players[socket.id].revealedPieces[GS.players[socket.id].lastPicked] = true;
-            socket_list[socket.id].emit('pieceRevealed',{revealed: GS.players[socket.id].revealedPieces});
+            // socket_list[socket.id].emit('pieceRevealed',{id: socket.id, revealed: GS.players[socket.id].revealedPieces});
             
-            emitAll('addPlayerPiece',{pieces:GS.getShownPieces(socket.id),id:socket.id},socket.id);
+            emitAll('pieceRevealed',{pieces:GS.getShownPieces(socket.id),id:socket.id, revealed: GS.players[socket.id].revealedPieces});
             
             socket.emit('ownGuess',{success:success});
             emitAll('guessResult',{player: socket.id, target:data.target, piece: data.guess,success:success, position:data.position}, socket.id);
